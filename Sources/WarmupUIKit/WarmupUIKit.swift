@@ -25,6 +25,12 @@ public let WarmupUIKitVersion = "1.0.0"
 
 // MARK: - UI Components
 // Shared SwiftUI components and theme
+// - DynamicTheme: Colors, Typography, Spacing, Radius, Animations, Shadows
+// - QuickActionButton: Reusable button in bubble, chip, filled, outlined styles
+// - QuickActionRow: Horizontal scrolling row of quick action buttons
+// - QuickActionGrid: Grid layout for quick actions
+// - TrainerQuickActions: Pre-configured actions for trainer app
+// - ClientQuickActions: Pre-configured actions for client app
 
 // MARK: - Utilities
 // Extensions, helpers, constants
