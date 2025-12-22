@@ -17,6 +17,7 @@ public let WarmupUIKitVersion = "1.0.0"
 // MARK: - Models
 // Auth, Users, Workouts, Messaging, Programs, API responses
 // Social: FollowModels (FollowButtonStatus, FollowStatus, UserSummary, FollowRequestContent, etc.)
+// Search: UserSearchDto, SocialSearchResponse, SearchMetadata
 
 // MARK: - Networking
 // NetworkService, APIEndpoints, AuthService
