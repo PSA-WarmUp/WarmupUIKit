@@ -16,6 +16,7 @@ public let WarmupUIKitVersion = "1.0.0"
 
 // MARK: - Models
 // Auth, Users, Workouts, Messaging, Programs, API responses
+// Social: FollowModels (FollowButtonStatus, FollowStatus, UserSummary, FollowRequestContent, etc.)
 
 // MARK: - Networking
 // NetworkService, APIEndpoints, AuthService
@@ -31,6 +32,14 @@ public let WarmupUIKitVersion = "1.0.0"
 // - QuickActionGrid: Grid layout for quick actions
 // - TrainerQuickActions: Pre-configured actions for trainer app
 // - ClientQuickActions: Pre-configured actions for client app
+//
+// Social Components:
+// - FollowButton: Follow/Following/Requested/Mutual button states
+// - CompactFollowButton: Circular icon variant
+// - UserRowView: User row with avatar, name, badges, follow button
+// - CompactUserRowView: Compact variant for mentions/search
+// - FollowRequestCard: Follow request card with accept/decline actions
+// - StatusBadge: Generic status badge (neutral, info, warning, success, error)
 
 // MARK: - Utilities
 // Extensions, helpers, constants
