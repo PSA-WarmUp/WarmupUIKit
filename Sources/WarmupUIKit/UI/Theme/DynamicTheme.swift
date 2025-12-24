@@ -118,6 +118,39 @@ public struct DynamicTheme {
             light: Color(hex: "#ffffff").opacity(0.98),
             dark: Color(hex: "#0a0a0a").opacity(0.98)
         )
+
+        // MARK: - Gradients for richer visual hierarchy
+
+        /// Warm gradient using brand colors for onboarding and feature screens
+        public static let warmGradient = LinearGradient(
+            colors: [secondary, secondaryLight],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+
+        /// Premium/paywall gradient with dark elegant tones
+        public static let premiumGradient = LinearGradient(
+            colors: [Color(hex: "#1a1a2e"), Color(hex: "#16213e"), Color(hex: "#0f3460")],
+            startPoint: .top,
+            endPoint: .bottom
+        )
+
+        /// Primary brand gradient using flamingo pink tones
+        public static let primaryGradient = LinearGradient(
+            colors: [primary, primaryLight],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+
+        /// Subtle background gradient for key screens
+        public static let subtleGradient = LinearGradient(
+            colors: [
+                Color.dynamicColor(light: Color(hex: "#ffffff"), dark: Color(hex: "#0a0a0a")),
+                Color.dynamicColor(light: Color(hex: "#fef2f2"), dark: Color(hex: "#1a1a1c"))
+            ],
+            startPoint: .top,
+            endPoint: .bottom
+        )
     }
 
     // Keep all the same spacing, radius, typography from Theme.swift
@@ -125,8 +158,10 @@ public struct DynamicTheme {
         public static let xs: CGFloat = 4
         public static let sm: CGFloat = 8
         public static let md: CGFloat = 16
+        public static let card: CGFloat = 20        // Card-specific padding for richer feel
         public static let lg: CGFloat = 24
         public static let xl: CGFloat = 32
+        public static let section: CGFloat = 32     // Spacing between sections
         public static let xxl: CGFloat = 48
     }
 
@@ -141,23 +176,29 @@ public struct DynamicTheme {
     }
 
     public struct Typography {
-        // Display styles
+        // Display styles - increased size jump for better hierarchy
         public static let largeTitle = Font.system(size: 34, weight: .bold, design: .rounded)
-        public static let title = Font.system(size: 28, weight: .bold, design: .rounded)
-        public static let title2 = Font.system(size: 22, weight: .semibold, design: .rounded)
+        public static let title = Font.system(size: 32, weight: .bold, design: .rounded)
+        public static let title2 = Font.system(size: 24, weight: .semibold, design: .rounded)
         public static let title3 = Font.system(size: 20, weight: .semibold, design: .rounded)
 
         // Body styles
         public static let headline = Font.system(size: 17, weight: .semibold, design: .rounded)
-        public static let body = Font.system(size: 17, weight: .regular, design: .rounded)
-        public static let bodyMedium = Font.system(size: 17, weight: .medium, design: .rounded)
-        public static let callout = Font.system(size: 16, weight: .regular, design: .rounded)
-        public static let subheadline = Font.system(size: 15, weight: .regular, design: .rounded)
+        public static let body = Font.system(size: 16, weight: .regular, design: .rounded)
+        public static let bodyMedium = Font.system(size: 16, weight: .medium, design: .rounded)
+        public static let bodyLight = Font.system(size: 16, weight: .light, design: .rounded)
+        public static let callout = Font.system(size: 15, weight: .regular, design: .rounded)
+        public static let subheadline = Font.system(size: 14, weight: .regular, design: .rounded)
 
-        // Small styles
+        // Small styles - added light variants for tertiary text
         public static let footnote = Font.system(size: 13, weight: .regular, design: .rounded)
+        public static let footnoteLight = Font.system(size: 13, weight: .light, design: .rounded)
         public static let caption = Font.system(size: 12, weight: .regular, design: .rounded)
         public static let captionMedium = Font.system(size: 12, weight: .medium, design: .rounded)
+        public static let captionLight = Font.system(size: 12, weight: .light, design: .rounded)
+
+        // Micro text for badges, tags
+        public static let micro = Font.system(size: 10, weight: .medium, design: .rounded)
     }
 
     public struct Animations {
@@ -169,9 +210,13 @@ public struct DynamicTheme {
     }
 
     public struct Shadows {
-        public static let small = Shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 1)
-        public static let medium = Shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 2)
-        public static let large = Shadow(color: .black.opacity(0.15), radius: 16, x: 0, y: 4)
+        // Updated shadows: softer opacity (0.04-0.06), larger blur (8-16pt) for premium feel
+        public static let small = Shadow(color: .black.opacity(0.04), radius: 8, x: 0, y: 2)
+        public static let medium = Shadow(color: .black.opacity(0.05), radius: 12, x: 0, y: 4)
+        public static let large = Shadow(color: .black.opacity(0.06), radius: 16, x: 0, y: 6)
+
+        // Card-specific shadow for richer depth
+        public static let card = Shadow(color: .black.opacity(0.04), radius: 12, x: 0, y: 4)
 
         public struct Shadow {
             public let color: Color
