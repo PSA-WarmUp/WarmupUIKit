@@ -41,6 +41,20 @@ public let WarmupUIKitVersion = "1.0.0"
 // - CompactUserRowView: Compact variant for mentions/search
 // - FollowRequestCard: Follow request card with accept/decline actions
 // - StatusBadge: Generic status badge (neutral, info, warning, success, error)
+//
+// Calendar Components:
+// - CalendarEventDisplayable: Protocol for displayable calendar events
+// - CalendarEventType: Workout, consultation, or custom event types
+// - CalendarEventStatus: Event status (scheduled, inProgress, completed, etc.)
+// - HourSlotView: Hour slot for hourly calendar view
+// - CalendarDayCell: Day cell for week strip calendar
+// - CalendarStatusBadge: Status badge for calendar events
+// - CurrentTimeIndicator: Red line showing current time
+// - CalendarEventCardView: Generic event card for hourly calendar
+// - ConsultationEventCard: Specialized card for consultations
+// - WeekNavigationHeader: Navigation header for week-based calendar
+// - SelectedDayHeader: Header showing selected day with add button
+// - CalendarLoadingView: Loading view for calendar content
 
 // MARK: - Utilities
 // Extensions, helpers, constants
