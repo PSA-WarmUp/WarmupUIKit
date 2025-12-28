@@ -952,8 +952,9 @@ public struct APIEndpoints {
         public static var upload: String { "\(baseURL)/v1/media/upload" }
         public static var uploadImage: String { "\(baseURL)/v1/media/upload/image" }
         public static var uploadVideo: String { "\(baseURL)/v1/media/upload/video" }
+        public static var download: String { "\(baseURL)/v1/media/download" }
 
-        public static func download(_ fileId: String) -> String {
+        public static func downloadById(_ fileId: String) -> String {
             "\(baseURL)/v1/media/\(fileId)"
         }
 

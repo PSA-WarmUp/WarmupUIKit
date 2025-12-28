@@ -55,6 +55,25 @@ public let WarmupUIKitVersion = "1.0.0"
 // - WeekNavigationHeader: Navigation header for week-based calendar
 // - SelectedDayHeader: Header showing selected day with add button
 // - CalendarLoadingView: Loading view for calendar content
+//
+// ImagePicker Components:
+// - ImagePickerSource: Enum for camera vs photo library
+// - ImagePickerView: UIImagePickerController wrapper for SwiftUI
+// - ImageCropperView: Image cropping with circular mask for profiles
+// - ProfilePhotoPicker: Complete photo picker flow with camera/library/cropping
+// - CameraPickerWrapper: Camera-specific picker wrapper
+// - CameraViewController: UIKit camera controller wrapper
+// - ProfilePhotoPickerModifier: View modifier for photo picker
+// - isCameraAvailable(): Check camera availability
+// - UIImage.fixedOrientation(): Fix image orientation issues
+
+// MARK: - Services
+//
+// Media Service:
+// - MediaService: Upload/download service for S3 presigned URLs
+// - UploadUrlResponse: Response model for upload URL requests
+// - MediaService.compressImage(): Image compression helper
+// - MediaService.generateImageFileName(): Unique filename generator
 
 // MARK: - Utilities
 // Extensions, helpers, constants
