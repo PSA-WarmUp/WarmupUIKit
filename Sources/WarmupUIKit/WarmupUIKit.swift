@@ -74,6 +74,14 @@ public let WarmupUIKitVersion = "1.0.0"
 // - UploadUrlResponse: Response model for upload URL requests
 // - MediaService.compressImage(): Image compression helper
 // - MediaService.generateImageFileName(): Unique filename generator
+//
+// Notification Service:
+// - NotificationService: Fetch, mark read, and manage notifications
+// - AppNotification: Notification model with id, type, title, body, data
+// - NotificationType: Enum of all notification types (workout, social, message, etc.)
+// - NotificationData: Associated data for notifications (workoutId, userId, etc.)
+// - NotificationListResponse: Paginated response for notification list
+// - UnreadCountResponse: Response for unread count endpoint
 
 // MARK: - Utilities
 // Extensions, helpers, constants
