@@ -29,6 +29,10 @@ public struct User: Codable, Identifiable, Equatable, Hashable, Sendable {
     public let city: String?
     public let state: String?
 
+    // Subscription tiers (separate from role)
+    public let trainerTier: TrainerTier?        // For trainers: STARTER, GROWTH, SCALE, PRO
+    public let subscriptionTier: SubscriptionTier?  // For clients: FREE, PAID, PREMIUM
+
     // Computed property for display name
     public var name: String {
         if let fullName = fullName, !fullName.contains("null") {
@@ -51,9 +55,99 @@ public struct User: Codable, Identifiable, Equatable, Hashable, Sendable {
         return name
     }
 
+    // MARK: - Role (what type of user)
     public enum UserRole: String, Codable, CaseIterable, Sendable {
         case trainer = "TRAINER"
         case client = "CLIENT"
+        case admin = "ADMIN"
+        case facilityOwner = "FACILITY_OWNER"
+        case moderator = "MODERATOR"
+        case postOwner = "POST_OWNER"
+
+        public var isClient: Bool { self == .client }
+        public var isTrainer: Bool { self == .trainer }
+        public var canAccessTrainerApp: Bool { self == .trainer }
+
+        public var displayName: String {
+            switch self {
+            case .trainer: return "Trainer"
+            case .client: return "Client"
+            case .admin: return "Admin"
+            case .facilityOwner: return "Facility Owner"
+            case .moderator: return "Moderator"
+            case .postOwner: return "Post Owner"
+            }
+        }
+    }
+
+    // MARK: - Trainer Tier (pricing/limits for trainers)
+    public enum TrainerTier: String, Codable, CaseIterable, Sendable {
+        case starter = "STARTER"   // 1-5 clients @ $10/client
+        case growth = "GROWTH"     // 6-15 clients @ $7.50/client
+        case scale = "SCALE"       // 16-25 clients @ $5/client
+        case pro = "PRO"           // Unlimited @ $0/client
+
+        public var displayName: String {
+            switch self {
+            case .starter: return "Starter"
+            case .growth: return "Growth"
+            case .scale: return "Scale"
+            case .pro: return "Pro"
+            }
+        }
+
+        public var maxClients: Int {
+            switch self {
+            case .starter: return 5
+            case .growth: return 15
+            case .scale: return 25
+            case .pro: return Int.max
+            }
+        }
+
+        public var pricePerClient: Double {
+            switch self {
+            case .starter: return 10.00
+            case .growth: return 7.50
+            case .scale: return 5.00
+            case .pro: return 0.00
+            }
+        }
+
+        /// Calculate monthly billing based on client count (progressive pricing)
+        public static func calculateMonthlyBilling(clientCount: Int) -> Double {
+            var total: Double = 0
+            // First 5 at $10
+            total += Double(min(clientCount, 5)) * 10.0
+            // 6-15 at $7.50
+            if clientCount > 5 {
+                total += Double(min(clientCount - 5, 10)) * 7.5
+            }
+            // 16+ at $5
+            if clientCount > 15 {
+                total += Double(clientCount - 15) * 5.0
+            }
+            return total
+        }
+    }
+
+    // MARK: - Subscription Tier (for clients)
+    public enum SubscriptionTier: String, Codable, CaseIterable, Sendable {
+        case free = "FREE"
+        case paid = "PAID"
+        case premium = "PREMIUM"
+
+        public var displayName: String {
+            switch self {
+            case .free: return "Free"
+            case .paid: return "Paid"
+            case .premium: return "Premium"
+            }
+        }
+
+        public var isPaid: Bool {
+            self == .paid || self == .premium
+        }
     }
 
     enum CodingKeys: String, CodingKey {
@@ -61,6 +155,7 @@ public struct User: Codable, Identifiable, Equatable, Hashable, Sendable {
         case phoneNumber, profileImageUrl, isActive, emailVerified
         case trainerId, timezone, createdAt, lastLoginAt, updatedAt
         case zipCode, city, state
+        case trainerTier, subscriptionTier
     }
 
     // Computed property for formatted location
@@ -79,6 +174,36 @@ public struct User: Codable, Identifiable, Equatable, Hashable, Sendable {
             parts.append(zipCode)
         }
         return parts.isEmpty ? nil : parts.joined(separator: ", ")
+    }
+
+    // MARK: - Helper Methods
+
+    /// Whether this user is a trainer
+    public var isTrainer: Bool { role.isTrainer }
+
+    /// Whether this user is a client
+    public var isClient: Bool { role.isClient }
+
+    /// Whether this trainer is on Pro tier (unlimited clients)
+    public var isProTrainer: Bool {
+        role.isTrainer && trainerTier == .pro
+    }
+
+    /// Whether this client has a paid subscription
+    public var isPaidClient: Bool {
+        role.isClient && (subscriptionTier?.isPaid ?? false)
+    }
+
+    /// Check if trainer can add more clients based on their tier
+    public func canAddMoreClients(currentCount: Int) -> Bool {
+        guard role.isTrainer else { return false }
+        let tier = trainerTier ?? .starter
+        return currentCount < tier.maxClients
+    }
+
+    /// Get the trainer's current tier display name
+    public var trainerTierDisplayName: String {
+        (trainerTier ?? .starter).displayName
     }
 
     // MARK: - Public Initializer
@@ -101,7 +226,9 @@ public struct User: Codable, Identifiable, Equatable, Hashable, Sendable {
         updatedAt: String?,
         zipCode: String?,
         city: String?,
-        state: String?
+        state: String?,
+        trainerTier: TrainerTier? = nil,
+        subscriptionTier: SubscriptionTier? = nil
     ) {
         self.id = id
         self.email = email
@@ -121,6 +248,8 @@ public struct User: Codable, Identifiable, Equatable, Hashable, Sendable {
         self.zipCode = zipCode
         self.city = city
         self.state = state
+        self.trainerTier = trainerTier
+        self.subscriptionTier = subscriptionTier
     }
 }
 
@@ -128,7 +257,7 @@ public struct User: Codable, Identifiable, Equatable, Hashable, Sendable {
 
 extension User {
     /// Simple initializer for test data
-    public init(id: String, email: String, role: UserRole, name: String) {
+    public init(id: String, email: String, role: UserRole, name: String, trainerTier: TrainerTier? = nil, subscriptionTier: SubscriptionTier? = nil) {
         self.id = id
         self.email = email
         self.role = role
@@ -147,46 +276,51 @@ extension User {
         self.zipCode = nil
         self.city = nil
         self.state = nil
+        self.trainerTier = trainerTier
+        self.subscriptionTier = subscriptionTier
     }
 
     /// Factory method for test trainer
-    public static func testTrainer(name: String = "Test Trainer", email: String? = nil) -> User {
+    public static func testTrainer(name: String = "Test Trainer", email: String? = nil, tier: TrainerTier = .starter) -> User {
         User(
             id: UUID().uuidString,
             email: email ?? "\(name.lowercased().replacingOccurrences(of: " ", with: "."))@test.com",
             role: .trainer,
-            name: name
+            name: name,
+            trainerTier: tier
         )
     }
 
     /// Factory method for test client
-    public static func testClient(name: String = "Test Client", email: String? = nil) -> User {
+    public static func testClient(name: String = "Test Client", email: String? = nil, tier: SubscriptionTier = .premium) -> User {
         User(
             id: UUID().uuidString,
             email: email ?? "\(name.lowercased().replacingOccurrences(of: " ", with: "."))@test.com",
             role: .client,
-            name: name
+            name: name,
+            subscriptionTier: tier
         )
     }
 
     // Preview data
     public static var previewTrainer: User {
-        User(id: "trainer-1", email: "trainer@example.com", role: .trainer, name: "John Trainer")
+        User(id: "trainer-1", email: "trainer@example.com", role: .trainer, name: "John Trainer", trainerTier: .starter)
+    }
+
+    public static var previewProTrainer: User {
+        User(id: "trainer-2", email: "pro@example.com", role: .trainer, name: "Pro Trainer", trainerTier: .pro)
     }
 
     public static var previewClient: User {
-        User(id: "client-1", email: "client@example.com", role: .client, name: "Jane Client")
+        User(id: "client-1", email: "client@example.com", role: .client, name: "Jane Client", subscriptionTier: .premium)
     }
 
     public static var previewClients: [User] {
         [
-            User(id: "1", email: "john@example.com", role: .client, name: "John Smith"),
-            User(id: "2", email: "jane@example.com", role: .client, name: "Jane Doe"),
-            User(id: "3", email: "sarah@example.com", role: .client, name: "Sarah Johnson"),
-            User(id: "4", email: "mike@example.com", role: .client, name: "Mike Wilson")
+            User(id: "1", email: "john@example.com", role: .client, name: "John Smith", subscriptionTier: .premium),
+            User(id: "2", email: "jane@example.com", role: .client, name: "Jane Doe", subscriptionTier: .premium),
+            User(id: "3", email: "sarah@example.com", role: .client, name: "Sarah Johnson", subscriptionTier: .premium),
+            User(id: "4", email: "mike@example.com", role: .client, name: "Mike Wilson", subscriptionTier: .premium)
         ]
     }
 }
-
-// MARK: - Auth Request Types
-// Note: LoginRequest and TrainerRegistrationRequest are defined in AuthRequests.swift

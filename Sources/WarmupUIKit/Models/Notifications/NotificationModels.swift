@@ -176,6 +176,9 @@ public struct NotificationData: Codable {
     public let commenterName: String?
     public let action: String?
 
+    // Follow related
+    public let followId: String?
+
     // Generic
     public let userId: String?
 
@@ -190,6 +193,7 @@ public struct NotificationData: Codable {
         commenterId: String? = nil,
         commenterName: String? = nil,
         action: String? = nil,
+        followId: String? = nil,
         userId: String? = nil
     ) {
         self.workoutId = workoutId
@@ -202,6 +206,7 @@ public struct NotificationData: Codable {
         self.commenterId = commenterId
         self.commenterName = commenterName
         self.action = action
+        self.followId = followId
         self.userId = userId
     }
 }
