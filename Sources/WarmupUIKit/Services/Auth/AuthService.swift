@@ -9,8 +9,8 @@ import Foundation
 import Combine
 
 @MainActor
-open class AuthService: ObservableObject {
-    public static let shared = AuthService()
+open class BaseAuthService: ObservableObject {
+    public static let shared = BaseAuthService()
 
     // MARK: - Published Properties
     @Published public var isAuthenticated = false

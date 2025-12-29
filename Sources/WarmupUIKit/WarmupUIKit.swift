@@ -20,10 +20,10 @@ public let WarmupUIKitVersion = "1.0.0"
 // Search: UserSearchDto, SocialSearchResponse, SearchMetadata
 
 // MARK: - Networking
-// NetworkService, APIEndpoints, AuthService
+// NetworkService, APIEndpoints, BaseAuthService
 
 // MARK: - Services
-// AuthService
+// BaseAuthService (base class for app-specific auth implementations)
 
 // MARK: - UI Components
 // Shared SwiftUI components and theme
