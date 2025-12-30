@@ -112,7 +112,7 @@ public class ExercisePreferencesService {
 
     /// Removes an exercise from favorites
     public func removeFavoritePublisher(_ exerciseId: String) -> AnyPublisher<APIResponse<EmptyResponse>, Error> {
-        return networkService.delete(APIEndpoints.Exercises.removeFavorite(exerciseId), type: APIResponse<EmptyResponse>.self)
+        return networkService.delete(APIEndpoints.Exercises.removeFavorite(exerciseId))
     }
 
     /// Removes an exercise from favorites (async version)
