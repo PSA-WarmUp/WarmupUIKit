@@ -83,5 +83,35 @@ public let WarmupUIKitVersion = "1.0.0"
 // - NotificationListResponse: Paginated response for notification list
 // - UnreadCountResponse: Response for unread count endpoint
 
+// MARK: - Exercise Preferences
+//
+// Models:
+// - EffortType: Enum for effort tracking types (none, rpe, rir)
+// - RecentExercise: Recently used exercise with usage count and score
+// - ExerciseScheme: Trainer's most-used exercise configuration
+// - SmartDefaults: Smart defaults for exercise based on history
+// - TrainerExercisePreferences: Trainer's workout/exercise preferences
+// - UpdateTrainerPreferencesRequest: Request to update preferences
+// - RecordExerciseUsageRequest: Request to record exercise usage
+// - QuickAddExerciseRequest: Request for quick-add exercise creation
+//
+// Service:
+// - ExercisePreferencesService: Favorites, recent, smart defaults, quick-add
+//
+// UI Components:
+// - QuickAddExerciseView: Inline quick-add exercise input
+// - QuickAddExerciseRow: List row version of quick-add
+// - ExerciseTab: Enum for Recent/Favorites/All tabs
+// - ExerciseTabSelector: Horizontal tab selector
+// - ExerciseQuickAccessBar: Horizontal scrolling recent/favorites bar
+// - ExerciseChip: Compact exercise chip for quick access
+// - FavoriteButton: Star button for favoriting exercises
+// - WorkoutIntensitySettingsView: Workout-level intensity settings
+// - EffortTypePicker: Compact inline effort type picker
+// - EffortValueStepper: Stepper for RPE/RIR values
+// - SetEditRowEnhanced: Enhanced set row with rep ranges & RPE/RIR
+// - SetDisplayCompact: Compact read-only set display
+// - SetCountCycler: Tappable set count cycler (2→3→4→5)
+
 // MARK: - Utilities
 // Extensions, helpers, constants

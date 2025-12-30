@@ -711,12 +711,40 @@ extension SectionExercise {
     }
 }
 
+// MARK: - EffortType Enum
+/// Represents the type of effort/intensity tracking for a set
+public enum EffortType: String, CaseIterable, Codable, Sendable {
+    case none = "NONE"       // Weight-based (traditional)
+    case rpe = "RPE"         // Rate of Perceived Exertion (1-10 scale)
+    case rir = "RIR"         // Reps In Reserve (0-5 scale)
+
+    public var displayName: String {
+        switch self {
+        case .none: return "Weight"
+        case .rpe: return "RPE"
+        case .rir: return "RIR"
+        }
+    }
+
+    public var description: String {
+        switch self {
+        case .none: return "Target weight in lbs/kg"
+        case .rpe: return "Rate of Perceived Exertion (1-10)"
+        case .rir: return "Reps In Reserve (how many left in tank)"
+        }
+    }
+}
+
 // MARK: - ExerciseSet Model
-public struct ExerciseSet: Codable, Identifiable, Equatable {
+public struct ExerciseSet: Codable, Identifiable, Equatable, Sendable {
     public let id: String?
     public var reps: Int?
+    public var minReps: Int?       // For rep ranges (e.g., 8 in "8-12")
+    public var maxReps: Int?       // For rep ranges (e.g., 12 in "8-12")
     public var weight: String?     // Store as String to match backend
-    public var rpe: String?        // Store as String to match backend
+    public var rpe: String?        // Store as String to match backend (Rate of Perceived Exertion 1-10)
+    public var rir: String?        // Store as String to match backend (Reps In Reserve 0-5)
+    public var effortType: String? // "RPE" | "RIR" | "WEIGHT" | nil
     public var tempo: String?
     public var duration: Int?
     public var rest: String?       // Store as String to match backend
@@ -733,17 +761,72 @@ public struct ExerciseSet: Codable, Identifiable, Equatable {
         return Int(rpe)
     }
 
+    public var rirValue: Int? {
+        guard let rir = rir else { return nil }
+        return Int(rir)
+    }
+
     public var restValue: Int? {
         guard let rest = rest else { return nil }
         return Int(rest)
+    }
+
+    /// Returns the rep range as a display string (e.g., "8-12" or "10")
+    public var repRangeDisplay: String {
+        if let min = minReps, let max = maxReps, min != max {
+            return "\(min)-\(max)"
+        } else if let min = minReps {
+            return "\(min)"
+        } else if let max = maxReps {
+            return "\(max)"
+        } else if let reps = reps {
+            return "\(reps)"
+        }
+        return ""
+    }
+
+    /// Returns true if this set uses a rep range
+    public var hasRepRange: Bool {
+        minReps != nil && maxReps != nil && minReps != maxReps
+    }
+
+    /// Returns the parsed effort type enum
+    public var effortTypeEnum: EffortType {
+        guard let effortType = effortType else { return .none }
+        return EffortType(rawValue: effortType) ?? .none
+    }
+
+    /// Returns the effort display string based on effort type
+    public var effortDisplay: String {
+        switch effortTypeEnum {
+        case .rpe:
+            if let rpeVal = rpeValue {
+                return "RPE \(rpeVal)"
+            }
+            return "RPE"
+        case .rir:
+            if let rirVal = rirValue {
+                return "\(rirVal) RIR"
+            }
+            return "RIR"
+        case .none:
+            if let weightVal = weightValue {
+                return "\(Int(weightVal)) lbs"
+            }
+            return ""
+        }
     }
 
     // Initialize with either strings or numbers for convenience
     public init(
         id: String? = nil,
         reps: Int? = nil,
+        minReps: Int? = nil,
+        maxReps: Int? = nil,
         weight: Double? = nil,  // Accept Double for convenience
         rpe: Int? = nil,        // Accept Int for convenience
+        rir: Int? = nil,        // Accept Int for convenience
+        effortType: String? = nil,
         tempo: String? = nil,
         rest: Int? = nil,        // Accept Int for convenience
         notes: String? = nil,
@@ -751,8 +834,12 @@ public struct ExerciseSet: Codable, Identifiable, Equatable {
     ) {
         self.id = id ?? UUID().uuidString
         self.reps = reps
+        self.minReps = minReps
+        self.maxReps = maxReps
         self.weight = weight != nil ? "\(weight!)" : nil  // Convert to String
         self.rpe = rpe != nil ? "\(rpe!)" : nil           // Convert to String
+        self.rir = rir != nil ? "\(rir!)" : nil           // Convert to String
+        self.effortType = effortType
         self.tempo = tempo
         self.rest = rest != nil ? "\(rest!)" : nil        // Convert to String
         self.notes = notes
@@ -764,7 +851,7 @@ public struct ExerciseSet: Codable, Identifiable, Equatable {
     }
 
     public var isRepBased: Bool {
-        reps != nil
+        reps != nil || minReps != nil || maxReps != nil
     }
 }
 
@@ -773,8 +860,12 @@ extension ExerciseSet {
     public func toDto() -> ExerciseSetDto {
         ExerciseSetDto(
             reps: reps,
+            minReps: minReps,
+            maxReps: maxReps,
             weight: weight,     // Already a String?
             rpe: rpe,          // Already a String?
+            rir: rir,          // Already a String?
+            effortType: effortType,
             tempo: tempo,
             rest: rest,        // Already a String?
             notes: notes
@@ -1188,25 +1279,37 @@ public struct SectionExerciseDto: Codable {
     }
 }
 
-public struct ExerciseSetDto: Codable {
+public struct ExerciseSetDto: Codable, Sendable {
     public let reps: Int?
+    public let minReps: Int?       // For rep ranges (e.g., 8 in "8-12")
+    public let maxReps: Int?       // For rep ranges (e.g., 12 in "8-12")
     public let weight: String?
-    public let rpe: String?
+    public let rpe: String?        // Rate of Perceived Exertion (1-10)
+    public let rir: String?        // Reps In Reserve (0-5)
+    public let effortType: String? // "RPE" | "RIR" | "WEIGHT" | nil
     public let tempo: String?
     public let rest: String?
     public let notes: String?
 
     public init(
         reps: Int? = nil,
+        minReps: Int? = nil,
+        maxReps: Int? = nil,
         weight: String? = nil,
         rpe: String? = nil,
+        rir: String? = nil,
+        effortType: String? = nil,
         tempo: String? = nil,
         rest: String? = nil,
         notes: String? = nil
     ) {
         self.reps = reps
+        self.minReps = minReps
+        self.maxReps = maxReps
         self.weight = weight
         self.rpe = rpe
+        self.rir = rir
+        self.effortType = effortType
         self.tempo = tempo
         self.rest = rest
         self.notes = notes

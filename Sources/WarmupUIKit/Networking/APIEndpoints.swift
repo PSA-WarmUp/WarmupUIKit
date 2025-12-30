@@ -371,6 +371,27 @@ public struct APIEndpoints {
         public static func delete(_ id: String) -> String {
             return "/v1/exercises/\(id)"
         }
+
+        // Recent & Smart Defaults
+        public static var recent: String { "\(baseURL)/v1/exercises/recent" }
+        public static var quickAdd: String { "\(baseURL)/v1/exercises/quick-add" }
+
+        public static func recordUsage(_ id: String) -> String {
+            "\(baseURL)/v1/exercises/\(id)/record-usage"
+        }
+
+        public static func smartDefaults(_ id: String) -> String {
+            "\(baseURL)/v1/exercises/\(id)/smart-defaults"
+        }
+
+        public static func smartDefaultsForClient(_ id: String, clientId: String) -> String {
+            "\(baseURL)/v1/exercises/\(id)/smart-defaults?clientId=\(clientId)"
+        }
+    }
+
+    // MARK: - Trainer Preferences
+    public struct TrainerPreferences {
+        public static var me: String { "\(baseURL)/v1/trainers/me/preferences" }
     }
 
     // MARK: - Invitations
