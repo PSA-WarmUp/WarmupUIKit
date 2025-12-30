@@ -165,7 +165,7 @@ public struct ExerciseChip: View {
             .background(DynamicTheme.Colors.background)
             .cornerRadius(DynamicTheme.Radius.round)
             .overlay(
-                RoundedRectangle(cornerRadius: DynamicTheme.BorderRadius.full)
+                RoundedRectangle(cornerRadius: DynamicTheme.Radius.round)
                     .stroke(DynamicTheme.Colors.border, lineWidth: 1)
             )
         }
