@@ -113,5 +113,36 @@ public let WarmupUIKitVersion = "1.0.0"
 // - SetDisplayCompact: Compact read-only set display
 // - SetCountCycler: Tappable set count cycler (2→3→4→5)
 
+// MARK: - Feed Components
+//
+// Models:
+// - FeedResponse: Paginated feed response with items, pageInfo, metadata
+// - FeedItem: Individual feed post with author, type, cards, engagement metrics
+// - AuthorInfo: Post author with userId, displayName, avatarUrl, isTrainer
+// - PostType: Enum for post types (workout, milestone, shoutout, reflection, etc.)
+// - PostPerspective: Enum for post perspective (self, coach, system)
+// - PostVisibility: Enum for visibility (public, friends, trainerClient, private)
+// - PublicCardDto: Minimal card for public viewers
+// - FriendsCardDto: Extended card for friends
+// - FullCardDto: Full detail card for trainer/client/self views
+// - MilestoneCardDto: Milestone celebration card
+// - ShoutoutCardDto: Trainer shoutout card
+// - ShareableWorkoutDto: Completed workout that can be shared to feed
+// - ReactionType: Enum for reactions (like, fire, clap, strong, heart)
+// - LikerDto: User who liked a post
+//
+// UI Components:
+// - FeedCardView: Main feed card that renders different card variants
+// - FeedCardHeader: Card header with avatar, name, time, more button
+// - FeedCardFooter: Card footer with like, comment, congrats actions
+// - PublicCardContent: Minimal workout card for public viewers
+// - FriendsCardContent: Extended workout card for friends
+// - FullCardContent: Full workout card with PRs, trainer notes, caption
+// - MilestoneCardContent: Milestone celebration card
+// - ShoutoutCardContent: Trainer shoutout card
+// - MinimalCardContent: Fallback minimal content
+// - ExerciseHighlightRow: Exercise row with PR indicator
+// - MetricView: Metric display component
+
 // MARK: - Utilities
 // Extensions, helpers, constants
