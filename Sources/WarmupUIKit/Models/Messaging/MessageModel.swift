@@ -27,6 +27,12 @@ public struct MessageModel: Codable, Identifiable {
     public let isEdited: Bool?
     public let editedAt: String?
 
+    // Soft delete information
+    public let isDeleted: Bool?
+    public let deletedAt: String?
+    public let deletedBy: String?
+    public let canBeDeleted: Bool?
+
     // Reply information (future)
     public let replyToMessageId: String?
     // Note: replyToMessage would need to be loaded separately to avoid recursive struct
@@ -51,6 +57,10 @@ public struct MessageModel: Codable, Identifiable {
         readReceipts: [ReadReceipt]? = nil,
         isEdited: Bool? = nil,
         editedAt: String? = nil,
+        isDeleted: Bool? = nil,
+        deletedAt: String? = nil,
+        deletedBy: String? = nil,
+        canBeDeleted: Bool? = nil,
         replyToMessageId: String? = nil,
         isReadByCurrentUser: Bool? = nil,
         readByCurrentUserAt: String? = nil
@@ -70,6 +80,10 @@ public struct MessageModel: Codable, Identifiable {
         self.readReceipts = readReceipts
         self.isEdited = isEdited
         self.editedAt = editedAt
+        self.isDeleted = isDeleted
+        self.deletedAt = deletedAt
+        self.deletedBy = deletedBy
+        self.canBeDeleted = canBeDeleted
         self.replyToMessageId = replyToMessageId
         self.isReadByCurrentUser = isReadByCurrentUser
         self.readByCurrentUserAt = readByCurrentUserAt
@@ -87,6 +101,16 @@ public struct MessageModel: Codable, Identifiable {
 
     public var isRead: Bool {
         return status == .read
+    }
+
+    public var showDeletedPlaceholder: Bool {
+        return isDeleted == true
+    }
+
+    public var deletedDate: Date? {
+        guard let deletedAt = deletedAt else { return nil }
+        let formatter = ISO8601DateFormatter()
+        return formatter.date(from: deletedAt)
     }
 
     public var createdDate: Date {
@@ -114,6 +138,11 @@ public struct MessageModel: Codable, Identifiable {
     }
 
     public var displayContent: String {
+        // Show deleted placeholder if message was deleted
+        if showDeletedPlaceholder {
+            return "This message was deleted"
+        }
+
         switch messageType {
         case .text:
             return content ?? messageContent?.text ?? ""

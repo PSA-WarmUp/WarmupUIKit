@@ -36,10 +36,14 @@ public struct ConversationModel: Codable, Identifiable {
     public let createdAt: String?
     public let updatedAt: String?
 
-    // Additional fields for group conversations (future)
+    // Group conversation fields
     public let title: String?
     public let description: String?
     public let avatarUrl: String?
+    public let creatorId: String?
+    public let participants: [GroupParticipant]?
+    public let participantCount: Int?
+    public let currentUserGroupRole: GroupRole?
 
     public init(
         id: String,
@@ -63,7 +67,11 @@ public struct ConversationModel: Codable, Identifiable {
         updatedAt: String? = nil,
         title: String? = nil,
         description: String? = nil,
-        avatarUrl: String? = nil
+        avatarUrl: String? = nil,
+        creatorId: String? = nil,
+        participants: [GroupParticipant]? = nil,
+        participantCount: Int? = nil,
+        currentUserGroupRole: GroupRole? = nil
     ) {
         self.id = id
         self.participantIds = participantIds
@@ -87,6 +95,10 @@ public struct ConversationModel: Codable, Identifiable {
         self.title = title
         self.description = description
         self.avatarUrl = avatarUrl
+        self.creatorId = creatorId
+        self.participants = participants
+        self.participantCount = participantCount
+        self.currentUserGroupRole = currentUserGroupRole
     }
 
     // Computed properties
@@ -96,6 +108,24 @@ public struct ConversationModel: Codable, Identifiable {
 
     public var hasUnreadMessages: Bool {
         return (unreadCount ?? 0) > 0
+    }
+
+    public var isGroup: Bool {
+        return conversationType == .group
+    }
+
+    public var groupInitials: String {
+        guard isGroup, let title = title, !title.isEmpty else { return "G" }
+        let words = title.split(separator: " ")
+        if words.count >= 2 {
+            return String(words[0].prefix(1) + words[1].prefix(1)).uppercased()
+        }
+        return String(title.prefix(2)).uppercased()
+    }
+
+    public func isGroupAdmin(userId: String) -> Bool {
+        guard isGroup else { return false }
+        return participants?.first(where: { $0.id == userId })?.groupRole == .admin
     }
 
     public var lastMessageDate: Date? {
@@ -146,4 +176,51 @@ public struct CreateDirectConversationRequest: Codable {
 public struct ConversationAction: Codable {
     // Used for archive/unarchive, mute/unmute, pin/unpin actions
     public init() {}
+}
+
+// MARK: - Group Role
+public enum GroupRole: String, Codable {
+    case admin = "ADMIN"
+    case member = "MEMBER"
+}
+
+// MARK: - Group Participant
+public struct GroupParticipant: Codable, Identifiable {
+    public let id: String
+    public let name: String
+    public let profileImageUrl: String?
+    public let role: String?           // User role (TRAINER/CLIENT)
+    public let groupRole: GroupRole    // Role in this group (ADMIN/MEMBER)
+    public let joinedAt: String?
+
+    public init(
+        id: String,
+        name: String,
+        profileImageUrl: String? = nil,
+        role: String? = nil,
+        groupRole: GroupRole,
+        joinedAt: String? = nil
+    ) {
+        self.id = id
+        self.name = name
+        self.profileImageUrl = profileImageUrl
+        self.role = role
+        self.groupRole = groupRole
+        self.joinedAt = joinedAt
+    }
+
+    public var isAdmin: Bool {
+        return groupRole == .admin
+    }
+
+    public var isTrainer: Bool {
+        return role?.uppercased() == "TRAINER"
+    }
+
+    public var displayRole: String {
+        if isAdmin {
+            return "Admin"
+        }
+        return isTrainer ? "Trainer" : "Member"
+    }
 }
