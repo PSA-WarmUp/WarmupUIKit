@@ -112,7 +112,9 @@ public struct QuickAddExerciseView: View {
         Task {
             do {
                 let request = QuickAddExerciseRequest(name: name)
+                print("📝 Quick-add: creating exercise '\(name)'")
                 let exercise = try await ExercisePreferencesService.shared.quickAddExercise(request)
+                print("✅ Quick-add: created exercise '\(exercise.name)' (id: \(exercise.id))")
 
                 await MainActor.run {
                     isCreating = false
@@ -120,9 +122,10 @@ public struct QuickAddExerciseView: View {
                     onExerciseCreated(exercise)
                 }
             } catch {
+                print("❌ Quick-add failed for '\(name)': \(error)")
                 await MainActor.run {
                     isCreating = false
-                    errorMessage = error.localizedDescription
+                    errorMessage = "Failed to add '\(name)': \(error.localizedDescription)"
                     showError = true
                 }
             }
