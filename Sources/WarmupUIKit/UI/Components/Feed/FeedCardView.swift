@@ -2,7 +2,7 @@
 //  FeedCardView.swift
 //  WarmupUIKit
 //
-//  Main feed card component that renders different card variants
+//  Main feed card component — Quiet Pro V2 design
 //  Shared between trainer and client apps
 //
 
@@ -49,9 +49,8 @@ public struct FeedCardView: View {
                     onCongrats: onCongrats
                 )
             }
-            .background(DynamicTheme.Colors.cardBackground)
-            .cornerRadius(DynamicTheme.Radius.medium)
-            .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
+            .background(DS.Color.card)
+            .cornerRadius(DS.Space.cardRadius)
         }
         .buttonStyle(PlainButtonStyle())
     }
@@ -64,8 +63,6 @@ public struct FeedCardView: View {
         case .trainerShoutout:
             ShoutoutCardContent(post: post)
         default:
-            // Workout summary, weekly summary, and other types
-            // Use effectiveFullCard which synthesizes from top-level fields if needed
             if let fullCard = post.effectiveFullCard {
                 FullCardContent(post: post, card: fullCard)
             } else if let friendsCard = post.friendsCard {
@@ -73,7 +70,6 @@ public struct FeedCardView: View {
             } else if let publicCard = post.publicCard {
                 PublicCardContent(post: post, card: publicCard)
             } else {
-                // Fallback minimal content
                 MinimalCardContent(post: post)
             }
         }
@@ -91,7 +87,7 @@ public struct FeedCardHeader: View {
     }
 
     public var body: some View {
-        HStack(spacing: DynamicTheme.Spacing.sm) {
+        HStack(spacing: DS.Space.v8) {
             // Avatar
             if let avatarUrl = post.avatarUrl, let url = URL(string: avatarUrl) {
                 AsyncImage(url: url) { image in
@@ -111,25 +107,25 @@ public struct FeedCardHeader: View {
             VStack(alignment: .leading, spacing: 2) {
                 HStack(spacing: 4) {
                     Text(post.displayName)
-                        .font(DynamicTheme.Typography.headline)
-                        .foregroundColor(DynamicTheme.Colors.text)
+                        .font(DS.Typo.bodyMedium)
+                        .foregroundColor(DS.Color.text)
 
                     if post.author?.isTrainer == true {
                         Image(systemName: "checkmark.seal.fill")
                             .font(.system(size: 12))
-                            .foregroundColor(DynamicTheme.Colors.primary)
+                            .foregroundColor(DS.Color.primary)
                     }
 
                     Text("· \(post.timeAgo)")
-                        .font(DynamicTheme.Typography.caption)
-                        .foregroundColor(DynamicTheme.Colors.textSecondary)
+                        .font(DS.Typo.caption)
+                        .foregroundColor(DS.Color.textSec)
                 }
 
                 // Subtitle: caption or PR summary
                 if let caption = post.displayCaption, !caption.isEmpty {
                     Text(caption)
-                        .font(DynamicTheme.Typography.caption)
-                        .foregroundColor(DynamicTheme.Colors.textSecondary)
+                        .font(DS.Typo.caption)
+                        .foregroundColor(DS.Color.textSec)
                         .lineLimit(1)
                 }
             }
@@ -140,21 +136,22 @@ public struct FeedCardHeader: View {
             Button(action: onMore) {
                 Image(systemName: "ellipsis")
                     .font(.system(size: 16, weight: .medium))
-                    .foregroundColor(DynamicTheme.Colors.textSecondary)
+                    .foregroundColor(DS.Color.textSec)
                     .frame(width: 32, height: 32)
             }
         }
-        .padding(DynamicTheme.Spacing.md)
+        .padding(DS.Space.cardPad)
     }
 
     private var avatarPlaceholder: some View {
-        Circle()
-            .fill(DynamicTheme.Colors.bubbleBackground)
+        let colors = DS.Color.avatar(for: post.displayName)
+        return Circle()
+            .fill(colors.bg)
             .frame(width: 40, height: 40)
             .overlay(
-                Text(String(post.displayName.prefix(1)).uppercased())
-                    .font(DynamicTheme.Typography.headline)
-                    .foregroundColor(DynamicTheme.Colors.textSecondary)
+                Text(String(post.displayName.prefix(2)).uppercased())
+                    .font(DS.Typo.calloutMedium)
+                    .foregroundColor(colors.fg)
             )
     }
 }
@@ -174,104 +171,101 @@ public struct FeedCardFooter: View {
     }
 
     public var body: some View {
-        VStack(alignment: .leading, spacing: DynamicTheme.Spacing.sm) {
+        VStack(alignment: .leading, spacing: DS.Space.v8) {
             // Engagement text + PR improvement
             HStack {
                 if post.likes > 0 || post.comments > 0 {
-                    HStack(spacing: DynamicTheme.Spacing.md) {
+                    HStack(spacing: DS.Space.v12) {
                         if post.likes > 0 {
                             HStack(spacing: 4) {
                                 Image(systemName: post.hasLiked ? "heart.fill" : "heart")
                                     .font(.system(size: 12))
-                                    .foregroundColor(post.hasLiked ? DynamicTheme.Colors.primary : DynamicTheme.Colors.textSecondary)
+                                    .foregroundColor(post.hasLiked ? DS.Color.primary : DS.Color.textSec)
                                 Text("\(post.likes)")
-                                    .font(DynamicTheme.Typography.caption)
-                                    .foregroundColor(DynamicTheme.Colors.textSecondary)
+                                    .font(DS.Typo.caption)
+                                    .foregroundColor(DS.Color.textSec)
                             }
                         }
                         if post.comments > 0 {
                             HStack(spacing: 4) {
                                 Image(systemName: "bubble.left")
                                     .font(.system(size: 12))
-                                    .foregroundColor(DynamicTheme.Colors.textSecondary)
+                                    .foregroundColor(DS.Color.textSec)
                                 Text("\(post.comments)")
-                                    .font(DynamicTheme.Typography.caption)
-                                    .foregroundColor(DynamicTheme.Colors.textSecondary)
+                                    .font(DS.Typo.caption)
+                                    .foregroundColor(DS.Color.textSec)
                             }
                         }
                     }
                 } else {
                     Text("Be the first to like this")
-                        .font(DynamicTheme.Typography.caption)
-                        .foregroundColor(DynamicTheme.Colors.textTertiary)
+                        .font(DS.Typo.caption)
+                        .foregroundColor(DS.Color.textTer)
                 }
 
                 Spacer()
 
-                // PR improvement label (e.g., "+10 lb · new 1RM")
+                // PR improvement label
                 if let label = post.prProgression?.improvementLabel {
                     Text(label)
-                        .font(DynamicTheme.Typography.caption)
-                        .foregroundColor(DynamicTheme.Colors.textSecondary)
+                        .font(DS.Typo.caption)
+                        .foregroundColor(DS.Color.textSec)
                 }
             }
-            .padding(.horizontal, DynamicTheme.Spacing.md)
+            .padding(.horizontal, DS.Space.cardPad)
 
             Divider()
-                .background(DynamicTheme.Colors.border)
+                .background(DS.Color.hairline)
 
             // Action buttons
             HStack(spacing: 0) {
-                // Like button
                 Button(action: onLike) {
                     HStack(spacing: 6) {
                         Image(systemName: post.hasLiked ? "heart.fill" : "heart")
                             .font(.system(size: 18))
-                            .foregroundColor(post.hasLiked ? DynamicTheme.Colors.primary : DynamicTheme.Colors.textSecondary)
+                            .foregroundColor(post.hasLiked ? DS.Color.primary : DS.Color.textSec)
 
                         Text("Like")
-                            .font(DynamicTheme.Typography.subheadline)
-                            .foregroundColor(post.hasLiked ? DynamicTheme.Colors.primary : DynamicTheme.Colors.textSecondary)
+                            .font(DS.Typo.callout)
+                            .foregroundColor(post.hasLiked ? DS.Color.primary : DS.Color.textSec)
                     }
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, DynamicTheme.Spacing.sm)
+                    .padding(.vertical, DS.Space.v8)
                 }
 
-                // Comment button
                 Button(action: onComment) {
                     HStack(spacing: 6) {
                         Image(systemName: "bubble.left")
                             .font(.system(size: 18))
-                            .foregroundColor(DynamicTheme.Colors.textSecondary)
+                            .foregroundColor(DS.Color.textSec)
 
                         Text("Comment")
-                            .font(DynamicTheme.Typography.subheadline)
-                            .foregroundColor(DynamicTheme.Colors.textSecondary)
+                            .font(DS.Typo.callout)
+                            .foregroundColor(DS.Color.textSec)
                     }
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, DynamicTheme.Spacing.sm)
+                    .padding(.vertical, DS.Space.v8)
                 }
 
-                // Congrats button (for milestones)
                 if let onCongrats = onCongrats, post.postType == .milestone {
                     Button(action: onCongrats) {
                         HStack(spacing: 6) {
                             Image(systemName: "hands.clap.fill")
                                 .font(.system(size: 18))
-                                .foregroundColor(DynamicTheme.Colors.warning)
+                                .foregroundColor(DS.Color.warning)
 
                             Text("Congrats")
-                                .font(DynamicTheme.Typography.subheadline)
-                                .foregroundColor(DynamicTheme.Colors.warning)
+                                .font(DS.Typo.callout)
+                                .foregroundColor(DS.Color.warning)
                         }
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, DynamicTheme.Spacing.sm)
+                        .padding(.vertical, DS.Space.v8)
                     }
                 }
             }
-            .padding(.horizontal, DynamicTheme.Spacing.sm)
+            .padding(.horizontal, DS.Space.v8)
         }
-        .padding(.bottom, DynamicTheme.Spacing.sm)
+        .padding(.bottom, DS.Space.v8)
     }
 }
 
@@ -284,40 +278,44 @@ public struct MilestoneCardContent: View {
     }
 
     public var body: some View {
-        VStack(spacing: DynamicTheme.Spacing.md) {
+        VStack(spacing: DS.Space.v16) {
             if let milestone = post.milestone {
-                // Icon
                 Circle()
-                    .fill(DynamicTheme.Colors.warning.opacity(0.15))
+                    .fill(DS.Color.warning.opacity(0.15))
                     .frame(width: 64, height: 64)
                     .overlay(
                         Image(systemName: milestone.iconName)
                             .font(.system(size: 28, weight: .semibold))
-                            .foregroundColor(DynamicTheme.Colors.warning)
+                            .foregroundColor(DS.Color.warning)
                     )
 
-                // Title
                 if let title = milestone.title {
                     Text(title)
-                        .font(DynamicTheme.Typography.title2)
-                        .foregroundColor(DynamicTheme.Colors.text)
+                        .font(DS.Typo.title2)
+                        .foregroundColor(DS.Color.text)
                         .multilineTextAlignment(.center)
                 }
 
-                // Subtitle
                 if let subtitle = milestone.subtitle {
                     Text(subtitle)
-                        .font(DynamicTheme.Typography.body)
-                        .foregroundColor(DynamicTheme.Colors.textSecondary)
+                        .font(DS.Typo.body)
+                        .foregroundColor(DS.Color.textSec)
                         .multilineTextAlignment(.center)
                 }
             }
+
+            // PR Progression chart (if available)
+            if let prProgression = post.prProgression,
+               let points = prProgression.dataPoints, !points.isEmpty {
+                PRProgressionChart(progression: prProgression)
+            }
         }
         .frame(maxWidth: .infinity)
-        .padding(DynamicTheme.Spacing.lg)
+        .padding(.horizontal, DS.Space.cardPad)
+        .padding(.vertical, DS.Space.v20)
         .background(
             LinearGradient(
-                colors: [DynamicTheme.Colors.warning.opacity(0.1), DynamicTheme.Colors.warning.opacity(0.05)],
+                colors: [DS.Color.warning.opacity(0.1), DS.Color.warning.opacity(0.05)],
                 startPoint: .top,
                 endPoint: .bottom
             )
@@ -334,90 +332,82 @@ public struct ShoutoutCardContent: View {
     }
 
     public var body: some View {
-        VStack(alignment: .leading, spacing: DynamicTheme.Spacing.md) {
+        VStack(alignment: .leading, spacing: DS.Space.v12) {
             if let shoutout = post.shoutout {
                 // Client being highlighted
                 if let clientName = shoutout.clientName {
-                    HStack(spacing: DynamicTheme.Spacing.sm) {
-                        // Client avatar
+                    HStack(spacing: DS.Space.v8) {
                         if let avatarUrl = shoutout.clientAvatarUrl, let url = URL(string: avatarUrl) {
                             AsyncImage(url: url) { image in
                                 image.resizable().aspectRatio(contentMode: .fill)
                             } placeholder: {
-                                Circle().fill(DynamicTheme.Colors.bubbleBackground)
+                                Circle().fill(DS.Color.cardHi)
                             }
                             .frame(width: 48, height: 48)
                             .clipShape(Circle())
                         } else {
+                            let colors = DS.Color.avatar(for: clientName)
                             Circle()
-                                .fill(DynamicTheme.Colors.primary.opacity(0.15))
+                                .fill(colors.bg)
                                 .frame(width: 48, height: 48)
                                 .overlay(
                                     Text(String(clientName.prefix(1)).uppercased())
-                                        .font(DynamicTheme.Typography.headline)
-                                        .foregroundColor(DynamicTheme.Colors.primary)
+                                        .font(DS.Typo.headline)
+                                        .foregroundColor(colors.fg)
                                 )
                         }
 
                         VStack(alignment: .leading, spacing: 2) {
                             Text("Shoutout to")
-                                .font(DynamicTheme.Typography.caption)
-                                .foregroundColor(DynamicTheme.Colors.textSecondary)
+                                .font(DS.Typo.caption)
+                                .foregroundColor(DS.Color.textSec)
 
                             Text(clientName)
-                                .font(DynamicTheme.Typography.title3)
-                                .foregroundColor(DynamicTheme.Colors.text)
+                                .font(DS.Typo.title3)
+                                .foregroundColor(DS.Color.text)
                         }
 
                         Spacer()
 
                         Image(systemName: "megaphone.fill")
                             .font(.system(size: 24))
-                            .foregroundColor(DynamicTheme.Colors.primary)
+                            .foregroundColor(DS.Color.primary)
                     }
                 }
 
                 // Message
                 if let message = shoutout.message {
                     Text(message)
-                        .font(DynamicTheme.Typography.body)
-                        .foregroundColor(DynamicTheme.Colors.text)
-                        .padding(DynamicTheme.Spacing.md)
+                        .font(DS.Typo.body)
+                        .foregroundColor(DS.Color.text)
+                        .padding(DS.Space.cardPad)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(DynamicTheme.Colors.primaryBackground)
-                        .cornerRadius(DynamicTheme.Radius.small)
+                        .background(DS.Color.primarySoft)
+                        .cornerRadius(DS.Space.innerRadius)
                 }
 
                 // Achievements
                 if let achievements = shoutout.achievements, !achievements.isEmpty {
                     ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: DynamicTheme.Spacing.sm) {
+                        HStack(spacing: DS.Space.v8) {
                             ForEach(achievements, id: \.self) { achievement in
                                 HStack(spacing: 4) {
                                     Image(systemName: "star.fill")
                                         .font(.system(size: 10))
                                     Text(achievement)
-                                        .font(DynamicTheme.Typography.caption)
+                                        .font(DS.Typo.caption)
                                 }
-                                .foregroundColor(DynamicTheme.Colors.warning)
+                                .foregroundColor(DS.Color.warning)
                                 .padding(.horizontal, 12)
                                 .padding(.vertical, 8)
-                                .background(DynamicTheme.Colors.warning.opacity(0.1))
-                                .cornerRadius(DynamicTheme.Radius.round)
+                                .background(DS.Color.warningSoft)
+                                .cornerRadius(DS.Space.smallRadius)
                             }
                         }
                     }
                 }
             }
         }
-        .padding(DynamicTheme.Spacing.md)
-        .background(DynamicTheme.Colors.bubbleBackground)
-        .cornerRadius(DynamicTheme.Radius.medium)
-        .overlay(
-            RoundedRectangle(cornerRadius: DynamicTheme.Radius.medium)
-                .stroke(DynamicTheme.Colors.primary.opacity(0.3), lineWidth: 1)
-        )
-        .padding(.horizontal, DynamicTheme.Spacing.md)
-        .padding(.bottom, DynamicTheme.Spacing.md)
+        .padding(DS.Space.cardPad)
     }
 }

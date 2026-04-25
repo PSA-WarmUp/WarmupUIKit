@@ -16,7 +16,7 @@ public struct PRProgressionChart: View {
     }
 
     public var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: DS.Space.v8) {
             // Eyebrow: "DEADLIFT · 12 WEEKS"
             HStack(spacing: 4) {
                 if let name = progression.exerciseName {
@@ -29,8 +29,8 @@ public struct PRProgressionChart: View {
                     Text(duration.uppercased())
                 }
             }
-            .font(.system(size: 12, weight: .medium))
-            .foregroundColor(DynamicTheme.Colors.textTertiary)
+            .font(DS.Typo.captionMedium)
+            .foregroundColor(DS.Color.textTer)
 
             // Bar chart
             if let dataPoints = progression.dataPoints, !dataPoints.isEmpty {
@@ -42,13 +42,13 @@ public struct PRProgressionChart: View {
                 Spacer()
                 if let label = progression.improvementLabel {
                     Text(label)
-                        .font(.system(size: 12, weight: .regular))
-                        .foregroundColor(DynamicTheme.Colors.textSecondary)
+                        .font(DS.Typo.caption)
+                        .foregroundColor(DS.Color.textSec)
                 }
             }
         }
-        .padding(.horizontal, DynamicTheme.Spacing.md)
-        .padding(.vertical, DynamicTheme.Spacing.sm)
+        .padding(.horizontal, DS.Space.cardPad)
+        .padding(.vertical, DS.Space.v8)
     }
 
     private func barChart(dataPoints: [PRDataPoint]) -> some View {
@@ -57,17 +57,16 @@ public struct PRProgressionChart: View {
         return HStack(alignment: .bottom, spacing: 3) {
             ForEach(dataPoints) { point in
                 VStack(spacing: 2) {
-                    // Value label on PR bar only
                     if point.isPR == true {
                         Text("\(Int(point.value))")
                             .font(.system(size: 13, weight: .bold, design: .rounded))
-                            .foregroundColor(DynamicTheme.Colors.primary)
+                            .foregroundColor(DS.Color.primary)
                     }
 
                     RoundedRectangle(cornerRadius: 3)
                         .fill(point.isPR == true
-                              ? DynamicTheme.Colors.primary
-                              : DynamicTheme.Colors.textTertiary.opacity(0.25))
+                              ? DS.Color.primary
+                              : DS.Color.textTer.opacity(0.25))
                         .frame(height: max(4, CGFloat(point.value / maxValue) * 80))
                 }
                 .frame(maxWidth: .infinity)

@@ -2,7 +2,7 @@
 //  CardContentViews.swift
 //  WarmupUIKit
 //
-//  Different card content layouts for feed posts
+//  Card content layouts for feed posts — Quiet Pro V2 design
 //  Shared between trainer and client apps
 //
 
@@ -21,128 +21,81 @@ public struct PublicCardContent: View {
     public var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             // Card header with workout type
-            HStack(spacing: DynamicTheme.Spacing.sm) {
-                // Workout icon in colored circle
+            HStack(spacing: DS.Space.v8) {
                 Circle()
-                    .fill(DynamicTheme.Colors.primary.opacity(0.15))
+                    .fill(DS.Color.primarySoft)
                     .frame(width: 40, height: 40)
                     .overlay(
                         Image(systemName: "dumbbell.fill")
                             .font(.system(size: 18, weight: .semibold))
-                            .foregroundColor(DynamicTheme.Colors.primary)
+                            .foregroundColor(DS.Color.primary)
                     )
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Workout Complete")
-                        .font(DynamicTheme.Typography.captionMedium)
-                        .foregroundColor(DynamicTheme.Colors.textSecondary)
+                        .font(DS.Typo.captionMedium)
+                        .foregroundColor(DS.Color.textSec)
 
                     Text(card.workoutType ?? "Workout")
-                        .font(DynamicTheme.Typography.headline)
-                        .foregroundColor(DynamicTheme.Colors.text)
+                        .font(DS.Typo.headline)
+                        .foregroundColor(DS.Color.text)
                 }
 
                 Spacer()
 
-                // PR Badge if any PRs
                 if let prCount = card.personalRecordsCount, prCount > 0 {
                     prBadge(count: prCount)
                 }
             }
-            .padding(DynamicTheme.Spacing.md)
+            .padding(DS.Space.cardPad)
 
-            Divider()
-                .background(DynamicTheme.Colors.border)
+            Divider().background(DS.Color.hairline)
 
             // Metrics grid
             HStack(spacing: 0) {
                 if let duration = card.durationMinutes {
-                    metricItem(
-                        icon: "clock.fill",
-                        value: formatDuration(duration),
-                        label: "Duration",
-                        color: DynamicTheme.Colors.primary
-                    )
+                    metricItem(icon: "clock.fill", value: formatDuration(duration), label: "Duration", color: DS.Color.primary)
                 }
-
                 if let sets = card.totalSets, sets > 0 {
-                    metricItem(
-                        icon: "repeat",
-                        value: "\(sets)",
-                        label: "Sets",
-                        color: DynamicTheme.Colors.info
-                    )
+                    metricItem(icon: "repeat", value: "\(sets)", label: "Sets", color: DS.Color.info)
                 }
-
                 if let reps = card.totalReps, reps > 0 {
-                    metricItem(
-                        icon: "figure.strengthtraining.traditional",
-                        value: "\(reps)",
-                        label: "Reps",
-                        color: DynamicTheme.Colors.success
-                    )
+                    metricItem(icon: "figure.strengthtraining.traditional", value: "\(reps)", label: "Reps", color: DS.Color.success)
                 }
-
                 if let calories = card.caloriesBurned, calories > 0 {
-                    metricItem(
-                        icon: "flame.fill",
-                        value: "\(calories)",
-                        label: "Cal",
-                        color: DynamicTheme.Colors.warning
-                    )
+                    metricItem(icon: "flame.fill", value: "\(calories)", label: "Cal", color: DS.Color.warning)
                 }
             }
-            .padding(.vertical, DynamicTheme.Spacing.md)
+            .padding(.vertical, DS.Space.cardPad)
 
-            // Caption (if any)
             if let caption = card.caption, !caption.isEmpty {
-                Divider()
-                    .background(DynamicTheme.Colors.border)
-
+                Divider().background(DS.Color.hairline)
                 Text(caption)
-                    .font(DynamicTheme.Typography.body)
-                    .foregroundColor(DynamicTheme.Colors.textSecondary)
+                    .font(DS.Typo.body)
+                    .foregroundColor(DS.Color.textSec)
                     .lineLimit(2)
-                    .padding(DynamicTheme.Spacing.md)
+                    .padding(DS.Space.cardPad)
             }
         }
-        .background(DynamicTheme.Colors.bubbleBackground)
-        .cornerRadius(DynamicTheme.Radius.medium)
-        .overlay(
-            RoundedRectangle(cornerRadius: DynamicTheme.Radius.medium)
-                .stroke(DynamicTheme.Colors.primary.opacity(0.3), lineWidth: 1)
-        )
-        .padding(.horizontal, DynamicTheme.Spacing.md)
-        .padding(.bottom, DynamicTheme.Spacing.md)
     }
 
     private func prBadge(count: Int) -> some View {
         HStack(spacing: 4) {
-            Image(systemName: "trophy.fill")
-                .font(.system(size: 12))
-            Text(count == 1 ? "PR" : "\(count) PRs")
-                .font(DynamicTheme.Typography.captionMedium)
+            Image(systemName: "trophy.fill").font(.system(size: 12))
+            Text(count == 1 ? "PR" : "\(count) PRs").font(DS.Typo.captionMedium)
         }
-        .foregroundColor(DynamicTheme.Colors.warning)
+        .foregroundColor(DS.Color.warning)
         .padding(.horizontal, 10)
         .padding(.vertical, 6)
-        .background(DynamicTheme.Colors.warning.opacity(0.15))
-        .cornerRadius(DynamicTheme.Radius.round)
+        .background(DS.Color.warningSoft)
+        .cornerRadius(DS.Space.smallRadius)
     }
 
     private func metricItem(icon: String, value: String, label: String, color: Color) -> some View {
         VStack(spacing: 4) {
-            Image(systemName: icon)
-                .font(.system(size: 16))
-                .foregroundColor(color)
-
-            Text(value)
-                .font(DynamicTheme.Typography.headline)
-                .foregroundColor(DynamicTheme.Colors.text)
-
-            Text(label)
-                .font(DynamicTheme.Typography.caption)
-                .foregroundColor(DynamicTheme.Colors.textTertiary)
+            Image(systemName: icon).font(.system(size: 16)).foregroundColor(color)
+            Text(value).font(DS.Typo.headline).foregroundColor(DS.Color.text)
+            Text(label).font(DS.Typo.caption).foregroundColor(DS.Color.textTer)
         }
         .frame(maxWidth: .infinity)
     }
@@ -150,14 +103,11 @@ public struct PublicCardContent: View {
     private func formatDuration(_ minutes: Int) -> String {
         let hours = minutes / 60
         let mins = minutes % 60
-        if hours > 0 {
-            return "\(hours)h \(mins)m"
-        }
-        return "\(mins)m"
+        return hours > 0 ? "\(hours)h \(mins)m" : "\(mins)m"
     }
 }
 
-// MARK: - Friends Card Content (Extended - Card Style)
+// MARK: - Friends Card Content (Extended)
 public struct FriendsCardContent: View {
     public let post: FeedItem
     public let card: FriendsCardDto
@@ -169,25 +119,23 @@ public struct FriendsCardContent: View {
 
     public var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            // Card header
-            HStack(spacing: DynamicTheme.Spacing.sm) {
+            HStack(spacing: DS.Space.v8) {
                 Circle()
-                    .fill(DynamicTheme.Colors.primary.opacity(0.15))
+                    .fill(DS.Color.primarySoft)
                     .frame(width: 40, height: 40)
                     .overlay(
                         Image(systemName: "dumbbell.fill")
                             .font(.system(size: 18, weight: .semibold))
-                            .foregroundColor(DynamicTheme.Colors.primary)
+                            .foregroundColor(DS.Color.primary)
                     )
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Workout Complete")
-                        .font(DynamicTheme.Typography.captionMedium)
-                        .foregroundColor(DynamicTheme.Colors.textSecondary)
-
+                        .font(DS.Typo.captionMedium)
+                        .foregroundColor(DS.Color.textSec)
                     Text(card.workoutType ?? "Workout")
-                        .font(DynamicTheme.Typography.headline)
-                        .foregroundColor(DynamicTheme.Colors.text)
+                        .font(DS.Typo.headline)
+                        .foregroundColor(DS.Color.text)
                 }
 
                 Spacer()
@@ -196,156 +144,91 @@ public struct FriendsCardContent: View {
                     prBadge(count: prCount)
                 }
             }
-            .padding(DynamicTheme.Spacing.md)
+            .padding(DS.Space.cardPad)
 
-            Divider()
-                .background(DynamicTheme.Colors.border)
+            Divider().background(DS.Color.hairline)
 
-            // Primary metrics row
+            // Primary metrics
             HStack(spacing: 0) {
                 if let duration = card.durationMinutes {
-                    metricItem(
-                        icon: "clock.fill",
-                        value: formatDuration(duration),
-                        label: "Duration",
-                        color: DynamicTheme.Colors.primary
-                    )
+                    metricItem(icon: "clock.fill", value: formatDuration(duration), label: "Duration", color: DS.Color.primary)
                 }
-
                 if let sets = card.totalSets, sets > 0 {
-                    metricItem(
-                        icon: "repeat",
-                        value: "\(sets)",
-                        label: "Sets",
-                        color: DynamicTheme.Colors.info
-                    )
+                    metricItem(icon: "repeat", value: "\(sets)", label: "Sets", color: DS.Color.info)
                 }
-
                 if let volume = card.totalVolume, volume > 0 {
-                    metricItem(
-                        icon: "scalemass.fill",
-                        value: formatVolume(volume),
-                        label: card.volumeUnit ?? "lbs",
-                        color: DynamicTheme.Colors.success
-                    )
+                    metricItem(icon: "scalemass.fill", value: formatVolume(volume), label: card.volumeUnit ?? "lbs", color: DS.Color.success)
                 }
-
                 if let rpe = card.averageRpe, rpe > 0 {
-                    metricItem(
-                        icon: "heart.fill",
-                        value: String(format: "%.1f", rpe),
-                        label: "Avg RPE",
-                        color: DynamicTheme.Colors.error
-                    )
+                    metricItem(icon: "heart.fill", value: String(format: "%.1f", rpe), label: "Avg RPE", color: DS.Color.error)
                 }
             }
-            .padding(.vertical, DynamicTheme.Spacing.md)
+            .padding(.vertical, DS.Space.cardPad)
 
-            // Secondary metrics (if available)
-            let hasSecondaryMetrics = (card.distanceMiles ?? 0) > 0 || (card.caloriesBurned ?? 0) > 0
-            if hasSecondaryMetrics {
-                Divider()
-                    .background(DynamicTheme.Colors.border)
-
-                HStack(spacing: DynamicTheme.Spacing.lg) {
+            // Secondary metrics
+            let hasSecondary = (card.distanceMiles ?? 0) > 0 || (card.caloriesBurned ?? 0) > 0
+            if hasSecondary {
+                Divider().background(DS.Color.hairline)
+                HStack(spacing: DS.Space.v16) {
                     if let distance = card.distanceMiles, distance > 0 {
                         HStack(spacing: 4) {
-                            Image(systemName: "figure.run")
-                                .font(.system(size: 14))
-                                .foregroundColor(DynamicTheme.Colors.textSecondary)
-                            Text(String(format: "%.1f mi", distance))
-                                .font(DynamicTheme.Typography.subheadline)
-                                .foregroundColor(DynamicTheme.Colors.text)
+                            Image(systemName: "figure.run").font(.system(size: 14)).foregroundColor(DS.Color.textSec)
+                            Text(String(format: "%.1f mi", distance)).font(DS.Typo.callout).foregroundColor(DS.Color.text)
                         }
                     }
-
                     if let calories = card.caloriesBurned, calories > 0 {
                         HStack(spacing: 4) {
-                            Image(systemName: "flame.fill")
-                                .font(.system(size: 14))
-                                .foregroundColor(DynamicTheme.Colors.warning)
-                            Text("\(calories) cal")
-                                .font(DynamicTheme.Typography.subheadline)
-                                .foregroundColor(DynamicTheme.Colors.text)
+                            Image(systemName: "flame.fill").font(.system(size: 14)).foregroundColor(DS.Color.warning)
+                            Text("\(calories) cal").font(DS.Typo.callout).foregroundColor(DS.Color.text)
                         }
                     }
-
                     Spacer()
                 }
-                .padding(DynamicTheme.Spacing.md)
+                .padding(DS.Space.cardPad)
             }
 
-            // Caption
             if let caption = card.caption, !caption.isEmpty {
-                Divider()
-                    .background(DynamicTheme.Colors.border)
-
+                Divider().background(DS.Color.hairline)
                 Text(caption)
-                    .font(DynamicTheme.Typography.body)
-                    .foregroundColor(DynamicTheme.Colors.text)
+                    .font(DS.Typo.body)
+                    .foregroundColor(DS.Color.text)
                     .lineLimit(3)
-                    .padding(DynamicTheme.Spacing.md)
+                    .padding(DS.Space.cardPad)
             }
         }
-        .background(DynamicTheme.Colors.bubbleBackground)
-        .cornerRadius(DynamicTheme.Radius.medium)
-        .overlay(
-            RoundedRectangle(cornerRadius: DynamicTheme.Radius.medium)
-                .stroke(DynamicTheme.Colors.primary.opacity(0.3), lineWidth: 1)
-        )
-        .padding(.horizontal, DynamicTheme.Spacing.md)
-        .padding(.bottom, DynamicTheme.Spacing.md)
     }
 
     private func prBadge(count: Int) -> some View {
         HStack(spacing: 4) {
-            Image(systemName: "trophy.fill")
-                .font(.system(size: 12))
-            Text(count == 1 ? "PR" : "\(count) PRs")
-                .font(DynamicTheme.Typography.captionMedium)
+            Image(systemName: "trophy.fill").font(.system(size: 12))
+            Text(count == 1 ? "PR" : "\(count) PRs").font(DS.Typo.captionMedium)
         }
-        .foregroundColor(DynamicTheme.Colors.warning)
-        .padding(.horizontal, 10)
-        .padding(.vertical, 6)
-        .background(DynamicTheme.Colors.warning.opacity(0.15))
-        .cornerRadius(DynamicTheme.Radius.round)
+        .foregroundColor(DS.Color.warning)
+        .padding(.horizontal, 10).padding(.vertical, 6)
+        .background(DS.Color.warningSoft)
+        .cornerRadius(DS.Space.smallRadius)
     }
 
     private func metricItem(icon: String, value: String, label: String, color: Color) -> some View {
         VStack(spacing: 4) {
-            Image(systemName: icon)
-                .font(.system(size: 16))
-                .foregroundColor(color)
-
-            Text(value)
-                .font(DynamicTheme.Typography.headline)
-                .foregroundColor(DynamicTheme.Colors.text)
-
-            Text(label)
-                .font(DynamicTheme.Typography.caption)
-                .foregroundColor(DynamicTheme.Colors.textTertiary)
+            Image(systemName: icon).font(.system(size: 16)).foregroundColor(color)
+            Text(value).font(DS.Typo.headline).foregroundColor(DS.Color.text)
+            Text(label).font(DS.Typo.caption).foregroundColor(DS.Color.textTer)
         }
         .frame(maxWidth: .infinity)
     }
 
     private func formatDuration(_ minutes: Int) -> String {
-        let hours = minutes / 60
-        let mins = minutes % 60
-        if hours > 0 {
-            return "\(hours)h \(mins)m"
-        }
-        return "\(mins)m"
+        let hours = minutes / 60; let mins = minutes % 60
+        return hours > 0 ? "\(hours)h \(mins)m" : "\(mins)m"
     }
 
     private func formatVolume(_ volume: Double) -> String {
-        if volume >= 1000 {
-            return String(format: "%.1fk", volume / 1000)
-        }
-        return String(format: "%.0f", volume)
+        volume >= 1000 ? String(format: "%.1fk", volume / 1000) : String(format: "%.0f", volume)
     }
 }
 
-// MARK: - Full Card Content (Trainer/Client/Self - Card Style)
+// MARK: - Full Card Content (Trainer/Client/Self)
 public struct FullCardContent: View {
     public let post: FeedItem
     public let card: FullCardDto
@@ -357,51 +240,44 @@ public struct FullCardContent: View {
 
     public var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            // Card header with program context
-            VStack(alignment: .leading, spacing: DynamicTheme.Spacing.xs) {
-                // Program badge (if available)
+            // Header with program context
+            VStack(alignment: .leading, spacing: DS.Space.v4) {
                 if let programName = card.programName {
                     HStack(spacing: 4) {
-                        Image(systemName: "doc.text.fill")
-                            .font(.system(size: 10))
-                        Text(programName)
-                            .font(DynamicTheme.Typography.caption)
+                        Image(systemName: "doc.text.fill").font(.system(size: 10))
+                        Text(programName).font(DS.Typo.caption)
                         if let workoutLabel = card.workoutLabel {
                             Text("·")
-                            Text(workoutLabel)
-                                .font(DynamicTheme.Typography.caption)
+                            Text(workoutLabel).font(DS.Typo.caption)
                         }
                     }
-                    .foregroundColor(DynamicTheme.Colors.primary)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
-                    .background(DynamicTheme.Colors.primary.opacity(0.1))
-                    .cornerRadius(DynamicTheme.Radius.xs)
+                    .foregroundColor(DS.Color.primary)
+                    .padding(.horizontal, 8).padding(.vertical, 4)
+                    .background(DS.Color.primarySoft)
+                    .cornerRadius(DS.Space.smallRadius)
                 }
 
-                HStack(spacing: DynamicTheme.Spacing.sm) {
+                HStack(spacing: DS.Space.v8) {
                     Circle()
-                        .fill(DynamicTheme.Colors.primary.opacity(0.15))
+                        .fill(DS.Color.primarySoft)
                         .frame(width: 44, height: 44)
                         .overlay(
                             Image(systemName: headerIcon)
                                 .font(.system(size: 20, weight: .semibold))
-                                .foregroundColor(DynamicTheme.Colors.primary)
+                                .foregroundColor(DS.Color.primary)
                         )
 
                     VStack(alignment: .leading, spacing: 2) {
                         Text(headerTitle)
-                            .font(DynamicTheme.Typography.captionMedium)
-                            .foregroundColor(DynamicTheme.Colors.textSecondary)
-
+                            .font(DS.Typo.captionMedium)
+                            .foregroundColor(DS.Color.textSec)
                         Text(card.workoutType ?? post.postType.displayName)
-                            .font(DynamicTheme.Typography.title3)
-                            .foregroundColor(DynamicTheme.Colors.text)
+                            .font(DS.Typo.title3)
+                            .foregroundColor(DS.Color.text)
                     }
 
                     Spacer()
 
-                    // PR Badge (only for workout types)
                     if post.postType.isWorkout {
                         if let prCount = card.personalRecordsCount, prCount > 0 {
                             prBadge(count: prCount)
@@ -411,250 +287,158 @@ public struct FullCardContent: View {
                     }
                 }
             }
-            .padding(DynamicTheme.Spacing.md)
+            .padding(DS.Space.cardPad)
 
-            Divider()
-                .background(DynamicTheme.Colors.border)
+            Divider().background(DS.Color.hairline)
 
-            // Main metrics grid
+            // Metrics grid
             HStack(spacing: 0) {
                 if let duration = card.durationMinutes {
-                    metricItem(
-                        icon: "clock.fill",
-                        value: formatDuration(duration),
-                        label: "Duration",
-                        color: DynamicTheme.Colors.primary
-                    )
+                    metricItem(icon: "clock.fill", value: formatDuration(duration), label: "Duration", color: DS.Color.primary)
                 }
-
                 if let sets = card.totalSets, sets > 0 {
-                    metricItem(
-                        icon: "repeat",
-                        value: "\(sets)",
-                        label: "Sets",
-                        color: DynamicTheme.Colors.info
-                    )
+                    metricItem(icon: "repeat", value: "\(sets)", label: "Sets", color: DS.Color.info)
                 }
-
                 if let volume = card.totalVolume, volume > 0 {
-                    metricItem(
-                        icon: "scalemass.fill",
-                        value: formatVolume(volume),
-                        label: card.volumeUnit ?? "lbs",
-                        color: DynamicTheme.Colors.success
-                    )
+                    metricItem(icon: "scalemass.fill", value: formatVolume(volume), label: card.volumeUnit ?? "lbs", color: DS.Color.success)
                 }
-
-                // Use averageRpe from WorkoutLog if available
                 if let avgRpe = card.averageRpe, avgRpe > 0 {
-                    metricItem(
-                        icon: "heart.fill",
-                        value: String(format: "%.1f", avgRpe),
-                        label: "Avg RPE",
-                        color: DynamicTheme.Colors.error
-                    )
+                    metricItem(icon: "heart.fill", value: String(format: "%.1f", avgRpe), label: "Avg RPE", color: DS.Color.error)
                 } else if let rpe = card.rpe {
-                    metricItem(
-                        icon: "heart.fill",
-                        value: "\(rpe)",
-                        label: "RPE",
-                        color: DynamicTheme.Colors.error
-                    )
+                    metricItem(icon: "heart.fill", value: "\(rpe)", label: "RPE", color: DS.Color.error)
                 }
             }
-            .padding(.vertical, DynamicTheme.Spacing.md)
+            .padding(.vertical, DS.Space.cardPad)
 
             // PR Progression bar chart
             if let prProgression = post.prProgression,
                let points = prProgression.dataPoints, !points.isEmpty {
-                Divider()
-                    .background(DynamicTheme.Colors.border)
-
+                Divider().background(DS.Color.hairline)
                 PRProgressionChart(progression: prProgression)
             }
 
             // PR Achievements (scrollable tags)
             if let prFlags = card.prFlags, !prFlags.isEmpty {
-                Divider()
-                    .background(DynamicTheme.Colors.border)
+                Divider().background(DS.Color.hairline)
 
-                VStack(alignment: .leading, spacing: DynamicTheme.Spacing.sm) {
+                VStack(alignment: .leading, spacing: DS.Space.v8) {
                     Text("PERSONAL RECORDS")
-                        .font(DynamicTheme.Typography.captionMedium)
-                        .foregroundColor(DynamicTheme.Colors.textTertiary)
-                        .padding(.horizontal, DynamicTheme.Spacing.md)
-                        .padding(.top, DynamicTheme.Spacing.sm)
+                        .font(DS.Typo.captionMedium)
+                        .foregroundColor(DS.Color.textTer)
+                        .padding(.horizontal, DS.Space.cardPad)
+                        .padding(.top, DS.Space.v8)
 
                     ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: DynamicTheme.Spacing.sm) {
+                        HStack(spacing: DS.Space.v8) {
                             ForEach(prFlags, id: \.self) { pr in
                                 HStack(spacing: 4) {
-                                    Image(systemName: "trophy.fill")
-                                        .font(.system(size: 10))
-                                    Text(pr)
-                                        .font(DynamicTheme.Typography.caption)
+                                    Image(systemName: "trophy.fill").font(.system(size: 10))
+                                    Text(pr).font(DS.Typo.caption)
                                 }
-                                .foregroundColor(DynamicTheme.Colors.warning)
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 8)
-                                .background(DynamicTheme.Colors.warning.opacity(0.1))
-                                .cornerRadius(DynamicTheme.Radius.round)
+                                .foregroundColor(DS.Color.warning)
+                                .padding(.horizontal, 12).padding(.vertical, 8)
+                                .background(DS.Color.warningSoft)
+                                .cornerRadius(DS.Space.smallRadius)
                             }
                         }
-                        .padding(.horizontal, DynamicTheme.Spacing.md)
+                        .padding(.horizontal, DS.Space.cardPad)
                     }
                 }
-                .padding(.bottom, DynamicTheme.Spacing.sm)
+                .padding(.bottom, DS.Space.v8)
             }
 
-            // Trainer Notes (if any)
+            // Trainer Notes
             if let trainerNotes = card.trainerNotes, !trainerNotes.isEmpty {
-                Divider()
-                    .background(DynamicTheme.Colors.border)
-
+                Divider().background(DS.Color.hairline)
                 VStack(alignment: .leading, spacing: 4) {
                     HStack(spacing: 4) {
-                        Image(systemName: "person.badge.shield.checkmark.fill")
-                            .font(.system(size: 10))
-                        Text("Trainer Notes")
-                            .font(DynamicTheme.Typography.captionMedium)
+                        Image(systemName: "person.badge.shield.checkmark.fill").font(.system(size: 10))
+                        Text("Trainer Notes").font(DS.Typo.captionMedium)
                     }
-                    .foregroundColor(DynamicTheme.Colors.textTertiary)
-
-                    Text(trainerNotes)
-                        .font(DynamicTheme.Typography.body)
-                        .foregroundColor(DynamicTheme.Colors.text)
+                    .foregroundColor(DS.Color.textTer)
+                    Text(trainerNotes).font(DS.Typo.body).foregroundColor(DS.Color.text)
                 }
-                .padding(DynamicTheme.Spacing.md)
+                .padding(DS.Space.cardPad)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .background(DynamicTheme.Colors.primaryBackground)
-                .cornerRadius(DynamicTheme.Radius.small)
-                .padding(.horizontal, DynamicTheme.Spacing.md)
-                .padding(.vertical, DynamicTheme.Spacing.sm)
+                .background(DS.Color.primarySoft)
+                .cornerRadius(DS.Space.innerRadius)
+                .padding(.horizontal, DS.Space.cardPad)
+                .padding(.vertical, DS.Space.v8)
             }
 
             // Caption
             if let caption = card.caption, !caption.isEmpty {
-                Divider()
-                    .background(DynamicTheme.Colors.border)
-
-                Text(caption)
-                    .font(DynamicTheme.Typography.body)
-                    .foregroundColor(DynamicTheme.Colors.text)
-                    .padding(DynamicTheme.Spacing.md)
+                Divider().background(DS.Color.hairline)
+                Text(caption).font(DS.Typo.body).foregroundColor(DS.Color.text).padding(DS.Space.cardPad)
             }
 
             // Client reflection
             if let reflection = card.clientReflection, !reflection.isEmpty {
                 VStack(alignment: .leading, spacing: 4) {
                     HStack(spacing: 4) {
-                        Image(systemName: "quote.opening")
-                            .font(.system(size: 10))
-                        Text("Reflection")
-                            .font(DynamicTheme.Typography.captionMedium)
+                        Image(systemName: "quote.opening").font(.system(size: 10))
+                        Text("Reflection").font(DS.Typo.captionMedium)
                     }
-                    .foregroundColor(DynamicTheme.Colors.textTertiary)
-
-                    Text(reflection)
-                        .font(DynamicTheme.Typography.body)
-                        .foregroundColor(DynamicTheme.Colors.text)
-                        .italic()
+                    .foregroundColor(DS.Color.textTer)
+                    Text(reflection).font(DS.Typo.body).foregroundColor(DS.Color.text).italic()
                 }
-                .padding(DynamicTheme.Spacing.md)
+                .padding(DS.Space.cardPad)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .background(DynamicTheme.Colors.primaryBackground)
-                .cornerRadius(DynamicTheme.Radius.small)
-                .padding(.horizontal, DynamicTheme.Spacing.md)
-                .padding(.bottom, DynamicTheme.Spacing.md)
+                .background(DS.Color.primarySoft)
+                .cornerRadius(DS.Space.innerRadius)
+                .padding(.horizontal, DS.Space.cardPad)
+                .padding(.bottom, DS.Space.cardPad)
             }
         }
-        .background(DynamicTheme.Colors.bubbleBackground)
-        .cornerRadius(DynamicTheme.Radius.medium)
-        .overlay(
-            RoundedRectangle(cornerRadius: DynamicTheme.Radius.medium)
-                .stroke(DynamicTheme.Colors.primary.opacity(0.3), lineWidth: 1)
-        )
-        .padding(.horizontal, DynamicTheme.Spacing.md)
-        .padding(.bottom, DynamicTheme.Spacing.md)
     }
-
-    // MARK: - Header Configuration
 
     private var headerTitle: String {
         switch post.postType {
-        case .workout, .workoutSummary:
-            return "Workout Complete"
-        case .weeklySummary:
-            return "Week in Review"
-        case .programCompletion:
-            return "Program Complete"
-        case .reflection:
-            return "Reflection"
-        default:
-            return post.postType.displayName
+        case .workout, .workoutSummary: return "Workout Complete"
+        case .weeklySummary: return "Week in Review"
+        case .programCompletion: return "Program Complete"
+        case .reflection: return "Reflection"
+        default: return post.postType.displayName
         }
     }
 
     private var headerIcon: String {
         switch post.postType {
-        case .workout, .workoutSummary:
-            return "dumbbell.fill"
-        case .weeklySummary:
-            return "calendar"
-        case .programCompletion:
-            return "checkmark.seal.fill"
-        case .reflection:
-            return "text.quote"
-        default:
-            return post.postType.iconName
+        case .workout, .workoutSummary: return "dumbbell.fill"
+        case .weeklySummary: return "calendar"
+        case .programCompletion: return "checkmark.seal.fill"
+        case .reflection: return "text.quote"
+        default: return post.postType.iconName
         }
     }
 
     private func prBadge(count: Int) -> some View {
         HStack(spacing: 4) {
-            Image(systemName: "trophy.fill")
-                .font(.system(size: 12))
-            Text(count == 1 ? "PR" : "\(count) PRs")
-                .font(DynamicTheme.Typography.captionMedium)
+            Image(systemName: "trophy.fill").font(.system(size: 12))
+            Text(count == 1 ? "PR" : "\(count) PRs").font(DS.Typo.captionMedium)
         }
-        .foregroundColor(DynamicTheme.Colors.warning)
-        .padding(.horizontal, 10)
-        .padding(.vertical, 6)
-        .background(DynamicTheme.Colors.warning.opacity(0.15))
-        .cornerRadius(DynamicTheme.Radius.round)
+        .foregroundColor(DS.Color.warning)
+        .padding(.horizontal, 10).padding(.vertical, 6)
+        .background(DS.Color.warningSoft)
+        .cornerRadius(DS.Space.smallRadius)
     }
 
     private func metricItem(icon: String, value: String, label: String, color: Color) -> some View {
         VStack(spacing: 4) {
-            Image(systemName: icon)
-                .font(.system(size: 16))
-                .foregroundColor(color)
-
-            Text(value)
-                .font(DynamicTheme.Typography.headline)
-                .foregroundColor(DynamicTheme.Colors.text)
-
-            Text(label)
-                .font(DynamicTheme.Typography.caption)
-                .foregroundColor(DynamicTheme.Colors.textTertiary)
+            Image(systemName: icon).font(.system(size: 16)).foregroundColor(color)
+            Text(value).font(DS.Typo.headline).foregroundColor(DS.Color.text)
+            Text(label).font(DS.Typo.caption).foregroundColor(DS.Color.textTer)
         }
         .frame(maxWidth: .infinity)
     }
 
     private func formatDuration(_ minutes: Int) -> String {
-        let hours = minutes / 60
-        let mins = minutes % 60
-        if hours > 0 {
-            return "\(hours)h \(mins)m"
-        }
-        return "\(mins)m"
+        let hours = minutes / 60; let mins = minutes % 60
+        return hours > 0 ? "\(hours)h \(mins)m" : "\(mins)m"
     }
 
     private func formatVolume(_ volume: Double) -> String {
-        if volume >= 1000 {
-            return String(format: "%.1fk", volume / 1000)
-        }
-        return String(format: "%.0f", volume)
+        volume >= 1000 ? String(format: "%.1fk", volume / 1000) : String(format: "%.0f", volume)
     }
 }
 
@@ -667,25 +451,22 @@ public struct ExerciseHighlightRow: View {
     }
 
     public var body: some View {
-        HStack(spacing: DynamicTheme.Spacing.sm) {
+        HStack(spacing: DS.Space.v8) {
             Circle()
-                .fill(exercise.isPR == true ? DynamicTheme.Colors.warning.opacity(0.15) : DynamicTheme.Colors.bubbleBackground)
+                .fill(exercise.isPR == true ? DS.Color.warningSoft : DS.Color.cardHi)
                 .frame(width: 28, height: 28)
                 .overlay(
                     Image(systemName: exercise.isPR == true ? "trophy.fill" : "figure.strengthtraining.traditional")
                         .font(.system(size: 12))
-                        .foregroundColor(exercise.isPR == true ? DynamicTheme.Colors.warning : DynamicTheme.Colors.textSecondary)
+                        .foregroundColor(exercise.isPR == true ? DS.Color.warning : DS.Color.textSec)
                 )
 
             VStack(alignment: .leading, spacing: 0) {
                 Text(exercise.name ?? "Exercise")
-                    .font(DynamicTheme.Typography.subheadline)
-                    .foregroundColor(DynamicTheme.Colors.text)
-
+                    .font(DS.Typo.callout)
+                    .foregroundColor(DS.Color.text)
                 if let summary = exercise.summary {
-                    Text(summary)
-                        .font(DynamicTheme.Typography.caption)
-                        .foregroundColor(DynamicTheme.Colors.textSecondary)
+                    Text(summary).font(DS.Typo.caption).foregroundColor(DS.Color.textSec)
                 }
             }
 
@@ -693,16 +474,15 @@ public struct ExerciseHighlightRow: View {
 
             if exercise.isPR == true {
                 Text("PR")
-                    .font(DynamicTheme.Typography.captionMedium)
-                    .foregroundColor(DynamicTheme.Colors.warning)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 2)
-                    .background(DynamicTheme.Colors.warning.opacity(0.15))
-                    .cornerRadius(DynamicTheme.Radius.xs)
+                    .font(DS.Typo.captionMedium)
+                    .foregroundColor(DS.Color.warning)
+                    .padding(.horizontal, 8).padding(.vertical, 2)
+                    .background(DS.Color.warningSoft)
+                    .cornerRadius(DS.Space.v4)
             }
         }
-        .padding(.horizontal, DynamicTheme.Spacing.md)
-        .padding(.vertical, DynamicTheme.Spacing.xs)
+        .padding(.horizontal, DS.Space.cardPad)
+        .padding(.vertical, DS.Space.v4)
     }
 }
 
@@ -716,47 +496,37 @@ public struct MinimalCardContent: View {
 
     public var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            HStack(spacing: DynamicTheme.Spacing.sm) {
+            HStack(spacing: DS.Space.v8) {
                 Circle()
-                    .fill(DynamicTheme.Colors.primary.opacity(0.15))
+                    .fill(DS.Color.primarySoft)
                     .frame(width: 40, height: 40)
                     .overlay(
                         Image(systemName: post.postType.iconName)
                             .font(.system(size: 18, weight: .semibold))
-                            .foregroundColor(DynamicTheme.Colors.primary)
+                            .foregroundColor(DS.Color.primary)
                     )
 
                 Text(post.postType.displayName)
-                    .font(DynamicTheme.Typography.headline)
-                    .foregroundColor(DynamicTheme.Colors.text)
+                    .font(DS.Typo.headline)
+                    .foregroundColor(DS.Color.text)
 
                 Spacer()
             }
-            .padding(DynamicTheme.Spacing.md)
+            .padding(DS.Space.cardPad)
 
             if let caption = post.caption, !caption.isEmpty {
-                Divider()
-                    .background(DynamicTheme.Colors.border)
-
+                Divider().background(DS.Color.hairline)
                 Text(caption)
-                    .font(DynamicTheme.Typography.body)
-                    .foregroundColor(DynamicTheme.Colors.textSecondary)
+                    .font(DS.Typo.body)
+                    .foregroundColor(DS.Color.textSec)
                     .lineLimit(2)
-                    .padding(DynamicTheme.Spacing.md)
+                    .padding(DS.Space.cardPad)
             }
         }
-        .background(DynamicTheme.Colors.bubbleBackground)
-        .cornerRadius(DynamicTheme.Radius.medium)
-        .overlay(
-            RoundedRectangle(cornerRadius: DynamicTheme.Radius.medium)
-                .stroke(DynamicTheme.Colors.border, lineWidth: 1)
-        )
-        .padding(.horizontal, DynamicTheme.Spacing.md)
-        .padding(.bottom, DynamicTheme.Spacing.md)
     }
 }
 
-// MARK: - Metric View Component (Legacy - kept for compatibility)
+// MARK: - Metric View Component (Legacy)
 public struct MetricView: View {
     public let value: String
     public let label: String
@@ -771,20 +541,12 @@ public struct MetricView: View {
     public var body: some View {
         VStack(spacing: 2) {
             HStack(spacing: 2) {
-                Text(value)
-                    .font(DynamicTheme.Typography.headline)
-                    .foregroundColor(DynamicTheme.Colors.text)
-
+                Text(value).font(DS.Typo.headline).foregroundColor(DS.Color.text)
                 if isPR {
-                    Image(systemName: "trophy.fill")
-                        .font(.system(size: 10))
-                        .foregroundColor(DynamicTheme.Colors.warning)
+                    Image(systemName: "trophy.fill").font(.system(size: 10)).foregroundColor(DS.Color.warning)
                 }
             }
-
-            Text(label)
-                .font(DynamicTheme.Typography.caption)
-                .foregroundColor(DynamicTheme.Colors.textTertiary)
+            Text(label).font(DS.Typo.caption).foregroundColor(DS.Color.textTer)
         }
         .frame(minWidth: 60)
     }
