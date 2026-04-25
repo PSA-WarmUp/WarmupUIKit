@@ -464,6 +464,15 @@ public struct FullCardContent: View {
             }
             .padding(.vertical, DynamicTheme.Spacing.md)
 
+            // PR Progression bar chart
+            if let prProgression = post.prProgression,
+               let points = prProgression.dataPoints, !points.isEmpty {
+                Divider()
+                    .background(DynamicTheme.Colors.border)
+
+                PRProgressionChart(progression: prProgression)
+            }
+
             // PR Achievements (scrollable tags)
             if let prFlags = card.prFlags, !prFlags.isEmpty {
                 Divider()

@@ -93,6 +93,9 @@ public struct FeedItem: Codable, Identifiable {
     public let viewerCanLike: Bool?
     public let availableActions: [String]?
 
+    // PR progression (bar chart data)
+    public let prProgression: PRProgressionDto?
+
     // Linked content
     public let linkedWorkoutId: String?
 
@@ -165,6 +168,7 @@ public struct FeedItem: Codable, Identifiable {
             viewerCanComment: viewerCanComment,
             viewerCanLike: viewerCanLike,
             availableActions: availableActions,
+            prProgression: prProgression,
             linkedWorkoutId: linkedWorkoutId
         )
     }
@@ -306,6 +310,7 @@ public struct FeedItem: Codable, Identifiable {
         viewerCanComment: Bool?,
         viewerCanLike: Bool?,
         availableActions: [String]?,
+        prProgression: PRProgressionDto? = nil,
         linkedWorkoutId: String?
     ) {
         self.id = id
@@ -340,6 +345,7 @@ public struct FeedItem: Codable, Identifiable {
         self.viewerCanComment = viewerCanComment
         self.viewerCanLike = viewerCanLike
         self.availableActions = availableActions
+        self.prProgression = prProgression
         self.linkedWorkoutId = linkedWorkoutId
     }
 }
@@ -582,6 +588,38 @@ public struct FullCardDto: Codable {
         self.totalReps = totalReps
         self.personalRecordsCount = personalRecordsCount
         self.averageRpe = averageRpe
+    }
+}
+
+/// PR progression data for bar chart visualization in feed cards
+public struct PRProgressionDto: Codable {
+    public let exerciseName: String?
+    public let durationLabel: String?       // e.g., "12 WEEKS"
+    public let dataPoints: [PRDataPoint]?
+    public let currentValue: Double?
+    public let unit: String?                // e.g., "lb"
+    public let improvementLabel: String?    // e.g., "+10 lb · new 1RM"
+
+    public init(exerciseName: String?, durationLabel: String?, dataPoints: [PRDataPoint]?, currentValue: Double?, unit: String?, improvementLabel: String?) {
+        self.exerciseName = exerciseName
+        self.durationLabel = durationLabel
+        self.dataPoints = dataPoints
+        self.currentValue = currentValue
+        self.unit = unit
+        self.improvementLabel = improvementLabel
+    }
+}
+
+public struct PRDataPoint: Codable, Identifiable {
+    public var id: Int { weekIndex }
+    public let weekIndex: Int
+    public let value: Double
+    public let isPR: Bool?
+
+    public init(weekIndex: Int, value: Double, isPR: Bool?) {
+        self.weekIndex = weekIndex
+        self.value = value
+        self.isPR = isPR
     }
 }
 

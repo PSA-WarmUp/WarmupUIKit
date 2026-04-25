@@ -107,7 +107,7 @@ public struct FeedCardHeader: View {
                 avatarPlaceholder
             }
 
-            // Name and time
+            // Name, time, and optional subtitle
             VStack(alignment: .leading, spacing: 2) {
                 HStack(spacing: 4) {
                     Text(post.displayName)
@@ -119,11 +119,19 @@ public struct FeedCardHeader: View {
                             .font(.system(size: 12))
                             .foregroundColor(DynamicTheme.Colors.primary)
                     }
+
+                    Text("· \(post.timeAgo)")
+                        .font(DynamicTheme.Typography.caption)
+                        .foregroundColor(DynamicTheme.Colors.textSecondary)
                 }
 
-                Text(post.timeAgo)
-                    .font(DynamicTheme.Typography.caption)
-                    .foregroundColor(DynamicTheme.Colors.textSecondary)
+                // Subtitle: caption or PR summary
+                if let caption = post.displayCaption, !caption.isEmpty {
+                    Text(caption)
+                        .font(DynamicTheme.Typography.caption)
+                        .foregroundColor(DynamicTheme.Colors.textSecondary)
+                        .lineLimit(1)
+                }
             }
 
             Spacer()
@@ -167,27 +175,47 @@ public struct FeedCardFooter: View {
 
     public var body: some View {
         VStack(alignment: .leading, spacing: DynamicTheme.Spacing.sm) {
-            // Engagement text
-            if post.likes > 0 || post.comments > 0 {
-                HStack(spacing: DynamicTheme.Spacing.md) {
-                    if post.likes > 0 {
-                        Text("\(post.likes) \(post.likes == 1 ? "like" : "likes")")
-                            .font(DynamicTheme.Typography.caption)
-                            .foregroundColor(DynamicTheme.Colors.textSecondary)
+            // Engagement text + PR improvement
+            HStack {
+                if post.likes > 0 || post.comments > 0 {
+                    HStack(spacing: DynamicTheme.Spacing.md) {
+                        if post.likes > 0 {
+                            HStack(spacing: 4) {
+                                Image(systemName: post.hasLiked ? "heart.fill" : "heart")
+                                    .font(.system(size: 12))
+                                    .foregroundColor(post.hasLiked ? DynamicTheme.Colors.primary : DynamicTheme.Colors.textSecondary)
+                                Text("\(post.likes)")
+                                    .font(DynamicTheme.Typography.caption)
+                                    .foregroundColor(DynamicTheme.Colors.textSecondary)
+                            }
+                        }
+                        if post.comments > 0 {
+                            HStack(spacing: 4) {
+                                Image(systemName: "bubble.left")
+                                    .font(.system(size: 12))
+                                    .foregroundColor(DynamicTheme.Colors.textSecondary)
+                                Text("\(post.comments)")
+                                    .font(DynamicTheme.Typography.caption)
+                                    .foregroundColor(DynamicTheme.Colors.textSecondary)
+                            }
+                        }
                     }
-                    if post.comments > 0 {
-                        Text("\(post.comments) \(post.comments == 1 ? "comment" : "comments")")
-                            .font(DynamicTheme.Typography.caption)
-                            .foregroundColor(DynamicTheme.Colors.textSecondary)
-                    }
+                } else {
+                    Text("Be the first to like this")
+                        .font(DynamicTheme.Typography.caption)
+                        .foregroundColor(DynamicTheme.Colors.textTertiary)
                 }
-                .padding(.horizontal, DynamicTheme.Spacing.md)
-            } else {
-                Text("Be the first to like this")
-                    .font(DynamicTheme.Typography.caption)
-                    .foregroundColor(DynamicTheme.Colors.textTertiary)
-                    .padding(.horizontal, DynamicTheme.Spacing.md)
+
+                Spacer()
+
+                // PR improvement label (e.g., "+10 lb · new 1RM")
+                if let label = post.prProgression?.improvementLabel {
+                    Text(label)
+                        .font(DynamicTheme.Typography.caption)
+                        .foregroundColor(DynamicTheme.Colors.textSecondary)
+                }
             }
+            .padding(.horizontal, DynamicTheme.Spacing.md)
 
             Divider()
                 .background(DynamicTheme.Colors.border)
