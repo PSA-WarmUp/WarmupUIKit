@@ -33,26 +33,28 @@ public struct FeedCardView: View {
     }
 
     public var body: some View {
-        Button(action: onTap) {
+        // Don't wrap the whole card in a Button. Nested Buttons in SwiftUI 17/18
+        // have flaky hit-testing — taps near the Like/Comment area get eaten by
+        // the outer Button at random. Instead, attach the row tap to the
+        // header/content area only and let the footer's buttons handle their
+        // own taps without competing.
+        VStack(alignment: .leading, spacing: 0) {
             VStack(alignment: .leading, spacing: 0) {
-                // Header
                 FeedCardHeader(post: post, onMore: onMore)
-
-                // Content - varies by post type
                 cardContent
-
-                // Footer with actions
-                FeedCardFooter(
-                    post: post,
-                    onLike: onLike,
-                    onComment: onComment,
-                    onCongrats: onCongrats
-                )
             }
-            .background(DS.Color.card)
-            .cornerRadius(DS.Space.cardRadius)
+            .contentShape(Rectangle())
+            .onTapGesture(perform: onTap)
+
+            FeedCardFooter(
+                post: post,
+                onLike: onLike,
+                onComment: onComment,
+                onCongrats: onCongrats
+            )
         }
-        .buttonStyle(PlainButtonStyle())
+        .background(DS.Color.card)
+        .cornerRadius(DS.Space.cardRadius)
     }
 
     @ViewBuilder
@@ -217,7 +219,9 @@ public struct FeedCardFooter: View {
             Divider()
                 .background(DS.Color.hairline)
 
-            // Action buttons
+            // Action buttons. Each button explicitly owns its hit area via
+            // .contentShape(Rectangle()) and uses .borderless to avoid the
+            // outer-button-eats-taps issue we used to have in this footer.
             HStack(spacing: 0) {
                 Button(action: onLike) {
                     HStack(spacing: 6) {
@@ -231,7 +235,9 @@ public struct FeedCardFooter: View {
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, DS.Space.v8)
+                    .contentShape(Rectangle())
                 }
+                .buttonStyle(.borderless)
 
                 Button(action: onComment) {
                     HStack(spacing: 6) {
@@ -245,7 +251,9 @@ public struct FeedCardFooter: View {
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, DS.Space.v8)
+                    .contentShape(Rectangle())
                 }
+                .buttonStyle(.borderless)
 
                 if let onCongrats = onCongrats, post.postType == .milestone {
                     Button(action: onCongrats) {
@@ -260,7 +268,9 @@ public struct FeedCardFooter: View {
                         }
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, DS.Space.v8)
+                        .contentShape(Rectangle())
                     }
+                    .buttonStyle(.borderless)
                 }
             }
             .padding(.horizontal, DS.Space.v8)
