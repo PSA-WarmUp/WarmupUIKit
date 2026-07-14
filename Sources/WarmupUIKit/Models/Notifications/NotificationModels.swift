@@ -80,6 +80,17 @@ public enum NotificationType: String, Codable {
     case workoutProposal = "WORKOUT_PROPOSAL"
     case workoutAccepted = "WORKOUT_ACCEPTED"
     case workoutCompleted = "WORKOUT_COMPLETED"
+    case workoutStarted = "WORKOUT_STARTED"
+
+    // Scheduling handshake (mirror backend NotificationType)
+    case workoutScheduled = "WORKOUT_SCHEDULED"
+    case workoutRescheduled = "WORKOUT_RESCHEDULED"
+    case workoutCancelled = "WORKOUT_CANCELLED"
+    case scheduleProposal = "SCHEDULE_PROPOSAL"
+    case scheduleAccepted = "SCHEDULE_ACCEPTED"
+
+    // Client prompted to review their trainer after enough sessions
+    case reviewEligible = "REVIEW_ELIGIBLE"
 
     // Social/Follow notifications
     case followRequest = "FOLLOW_REQUEST"
@@ -118,8 +129,12 @@ public enum NotificationType: String, Codable {
 
     public var icon: String {
         switch self {
-        case .workoutReminder, .workoutProposal, .workoutAccepted, .workoutCompleted:
+        case .workoutReminder, .workoutProposal, .workoutAccepted, .workoutCompleted, .workoutStarted:
             return "dumbbell.fill"
+        case .workoutScheduled, .workoutRescheduled, .workoutCancelled, .scheduleProposal, .scheduleAccepted:
+            return "calendar.badge.clock"
+        case .reviewEligible:
+            return "star.fill"
         case .followRequest, .followAccepted, .newFollower:
             return "person.badge.plus"
         case .newMessage:
