@@ -59,20 +59,36 @@ public struct FeedCardView: View {
 
     @ViewBuilder
     private var cardContent: some View {
-        switch post.postType {
-        case .milestone:
-            MilestoneCardContent(post: post)
-        case .trainerShoutout:
-            ShoutoutCardContent(post: post)
-        default:
-            if let fullCard = post.effectiveFullCard {
-                FullCardContent(post: post, card: fullCard)
-            } else if let friendsCard = post.friendsCard {
-                FriendsCardContent(post: post, card: friendsCard)
-            } else if let publicCard = post.publicCard {
-                PublicCardContent(post: post, card: publicCard)
-            } else {
-                MinimalCardContent(post: post)
+        VStack(alignment: .leading, spacing: DS.Space.v8) {
+            // The user's caption, rendered as a proper multi-line body (was previously only a
+            // 1-line truncated header subtitle, so it read as "missing"). Shown for every post type.
+            if let caption = post.displayCaption, !caption.isEmpty {
+                Text(caption)
+                    .font(DS.Typo.body)
+                    .foregroundColor(DS.Color.text)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+
+            switch post.postType {
+            case .milestone:
+                MilestoneCardContent(post: post)
+            case .trainerShoutout:
+                ShoutoutCardContent(post: post)
+            case .reflection:
+                // Text-only post — the caption above IS the content. Don't fall through to a
+                // zeroed "Workout Complete" card.
+                EmptyView()
+            default:
+                if let fullCard = post.effectiveFullCard {
+                    FullCardContent(post: post, card: fullCard)
+                } else if let friendsCard = post.friendsCard {
+                    FriendsCardContent(post: post, card: friendsCard)
+                } else if let publicCard = post.publicCard {
+                    PublicCardContent(post: post, card: publicCard)
+                } else {
+                    MinimalCardContent(post: post)
+                }
             }
         }
     }
@@ -122,14 +138,8 @@ public struct FeedCardHeader: View {
                         .font(DS.Typo.caption)
                         .foregroundColor(DS.Color.textSec)
                 }
-
-                // Subtitle: caption or PR summary
-                if let caption = post.displayCaption, !caption.isEmpty {
-                    Text(caption)
-                        .font(DS.Typo.caption)
-                        .foregroundColor(DS.Color.textSec)
-                        .lineLimit(1)
-                }
+                // Caption moved to the card body (see FeedCardView.cardContent) so the full text
+                // renders instead of a 1-line truncated header subtitle.
             }
 
             Spacer()

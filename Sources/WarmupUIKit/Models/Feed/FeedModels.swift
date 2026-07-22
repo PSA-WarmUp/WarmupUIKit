@@ -191,7 +191,15 @@ public struct FeedItem: Codable, Identifiable {
 
     /// Gets caption from card or top-level field
     public var displayCaption: String? {
-        publicCard?.caption ?? friendsCard?.caption ?? fullCard?.caption ?? caption
+        // Prefer the FULLEST card first (fullCard is the author/full-access, unsanitized caption).
+        // The old order preferred publicCard, whose caption is run through sanitizeCaption on the
+        // backend (strips "program:"/"rpe N" and trims) — so the author saw the sanitized/empty
+        // version, or nothing when sanitizing left an empty string. Treat blanks as absent so the
+        // fallback continues instead of stopping on an empty string.
+        let candidates = [fullCard?.caption, friendsCard?.caption, publicCard?.caption, caption]
+        return candidates
+            .compactMap { $0?.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .first { !$0.isEmpty }
     }
 
     /// Gets duration from card or top-level field
