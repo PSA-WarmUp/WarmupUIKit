@@ -203,11 +203,12 @@ public struct SetEditRowEnhanced: View {
                 .foregroundColor(DynamicTheme.Colors.textSecondary)
 
             Picker("", selection: Binding(
-                get: { set.rpeValue ?? 8 },
-                set: { set.rpe = "\($0)" }
+                get: { set.targetRpe ?? 8 },
+                set: { set.targetRpe = $0 }
             )) {
-                ForEach(1...10, id: \.self) { value in
-                    Text("\(value)").tag(value)
+                // Target RPE offered in 0.5 steps from 1.0 to 10.0 (contract §9/D3)
+                ForEach(Array(stride(from: 1.0, through: 10.0, by: 0.5)), id: \.self) { value in
+                    Text(ExerciseSet.formatRpe(value)).tag(value)
                 }
             }
             .pickerStyle(.menu)
@@ -360,7 +361,7 @@ struct SetEditRowEnhanced_Previews: PreviewProvider {
             )
 
             SetDisplayCompact(
-                set: ExerciseSet(minReps: 8, maxReps: 12, rpe: 8, effortType: "RPE"),
+                set: ExerciseSet(minReps: 8, maxReps: 12, targetRpe: 8, effortType: "RPE"),
                 setNumber: 1
             )
 
