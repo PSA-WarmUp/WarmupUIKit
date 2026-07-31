@@ -43,33 +43,28 @@ public struct SetEditRowEnhanced: View {
     }
 
     public var body: some View {
-        HStack(spacing: 12) {
-            // Set number (tappable to cycle)
-            setNumberButton
-
-            // Rep range inputs
-            repRangeInputs
-
-            // Divider
-            Text("@")
-                .font(.caption)
-                .foregroundColor(DynamicTheme.Colors.textSecondary)
-
-            // Effort input (weight, RPE, or RIR)
-            effortInput
-
-            Spacer()
-
-            // Delete button
-            if showDeleteButton {
-                Button(action: { onDelete?() }) {
-                    Image(systemName: "trash")
-                        .font(.caption)
-                        .foregroundColor(.red.opacity(0.7))
+        VStack(alignment: .leading, spacing: 10) {
+            // Row 1: set number + rep range (+ delete)
+            HStack(spacing: 10) {
+                setNumberButton
+                repRangeInputs
+                Spacer(minLength: 0)
+                if showDeleteButton {
+                    Button(action: { onDelete?() }) {
+                        Image(systemName: "trash")
+                            .font(.caption)
+                            .foregroundColor(.red.opacity(0.7))
+                    }
                 }
             }
+            // Row 2: weight + target RPE — BOTH always visible (no hidden menu, no clipping)
+            HStack(spacing: 14) {
+                weightField
+                rpeField
+                Spacer(minLength: 0)
+            }
         }
-        .padding(.vertical, 8)
+        .padding(.vertical, 10)
         .padding(.horizontal, 12)
         .background(DynamicTheme.Colors.cardBackground)
         .cornerRadius(DynamicTheme.Radius.small)
@@ -132,108 +127,55 @@ public struct SetEditRowEnhanced: View {
         }
     }
 
-    // MARK: - Effort Input
+    // MARK: - Weight (always visible)
 
-    private var effortInput: some View {
-        let currentEffortType = set.effortTypeEnum
-
-        return HStack(spacing: 8) {
-            // Effort type toggle
-            Menu {
-                ForEach(EffortType.allCases, id: \.self) { type in
-                    Button(action: {
-                        set.effortType = type.rawValue
-                    }) {
-                        HStack {
-                            Text(type.displayName)
-                            if currentEffortType == type {
-                                Image(systemName: "checkmark")
-                            }
-                        }
-                    }
-                }
-            } label: {
-                Text(currentEffortType.displayName)
-                    .font(.caption)
-                    .fontWeight(.medium)
-                    .foregroundColor(DynamicTheme.Colors.primary)
-            }
-
-            // Value input based on effort type
-            switch currentEffortType {
-            case .none:
-                weightInput
-            case .rpe:
-                rpeInput
-            case .rir:
-                rirInput
-            }
-        }
-    }
-
-    // MARK: - Weight Input
-
-    private var weightInput: some View {
-        HStack(spacing: 4) {
-            TextField("", text: Binding(
+    private var weightField: some View {
+        HStack(spacing: 6) {
+            Text("Weight")
+                .font(.caption)
+                .foregroundColor(DynamicTheme.Colors.textSecondary)
+            TextField("—", text: Binding(
                 get: { set.weight ?? "" },
                 set: { set.weight = $0.isEmpty ? nil : $0 }
             ))
             .textFieldStyle(.plain)
             .keyboardType(.decimalPad)
-            .frame(width: 50)
+            .frame(width: 68)
             .multilineTextAlignment(.center)
-            .padding(.horizontal, 6)
-            .padding(.vertical, 4)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 6)
             .background(DynamicTheme.Colors.background)
             .cornerRadius(DynamicTheme.Radius.small)
-
-            Text("lbs")
-                .font(.caption)
-                .foregroundColor(DynamicTheme.Colors.textSecondary)
         }
     }
 
-    // MARK: - RPE Input
+    // MARK: - Target RPE (always visible, optional, tap to pick)
 
-    private var rpeInput: some View {
-        HStack(spacing: 4) {
+    private var rpeField: some View {
+        HStack(spacing: 6) {
             Text("RPE")
                 .font(.caption)
                 .foregroundColor(DynamicTheme.Colors.textSecondary)
-
-            Picker("", selection: Binding(
-                get: { set.targetRpe ?? 8 },
-                set: { set.targetRpe = $0 }
-            )) {
-                // Target RPE offered in 0.5 steps from 1.0 to 10.0 (contract §9/D3)
+            Menu {
+                Button("None") { set.targetRpe = nil }
+                // Target RPE in 0.5 steps, 1.0–10.0 (contract §9/D3)
                 ForEach(Array(stride(from: 1.0, through: 10.0, by: 0.5)), id: \.self) { value in
-                    Text(ExerciseSet.formatRpe(value)).tag(value)
+                    Button(ExerciseSet.formatRpe(value)) {
+                        set.targetRpe = value
+                        if (set.effortType ?? "").isEmpty { set.effortType = "RPE" }
+                    }
                 }
+            } label: {
+                Text(set.targetRpe.map { ExerciseSet.formatRpe($0) } ?? "—")
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+                    .foregroundColor(DynamicTheme.Colors.primary)
+                    .frame(minWidth: 44)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 6)
+                    .background(DynamicTheme.Colors.background)
+                    .cornerRadius(DynamicTheme.Radius.small)
             }
-            .pickerStyle(.menu)
-            .frame(width: 50)
-        }
-    }
-
-    // MARK: - RIR Input
-
-    private var rirInput: some View {
-        HStack(spacing: 4) {
-            Picker("", selection: Binding(
-                get: { set.rirValue ?? 2 },
-                set: { set.rir = "\($0)" }
-            )) {
-                ForEach(0...5, id: \.self) { value in
-                    Text("\(value)").tag(value)
-                }
-            }
-            .pickerStyle(.menu)
-            .frame(width: 40)
-
-            Text("RIR")
-                .font(.caption)
-                .foregroundColor(DynamicTheme.Colors.textSecondary)
         }
     }
 }
