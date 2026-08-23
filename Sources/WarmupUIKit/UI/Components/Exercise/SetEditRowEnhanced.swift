@@ -87,13 +87,19 @@ public struct SetEditRowEnhanced: View {
 
     // MARK: - Rep Range Inputs
 
+    /// Min / max rep boxes.
+    ///
+    /// The max box used to fall back to `set.reps` when `maxReps` was nil, so a set defaulted
+    /// to 12 reps rendered a solid "12" that looked entered. The trainer saw "8 - 12" while
+    /// the model held `maxReps: nil`, and the workout — correctly — showed "8". Now an unset
+    /// max renders as an actual placeholder, so the boxes and the workout always agree.
     private var repRangeInputs: some View {
         HStack(spacing: 4) {
-            // Min reps
-            TextField("", value: Binding(
-                get: { set.minReps ?? set.reps ?? 0 },
-                set: { set.minReps = $0 > 0 ? $0 : nil }
-            ), format: .number)
+            // Min — falls back to the single rep count, which genuinely is the low value.
+            TextField("reps", text: Binding(
+                get: { (set.minReps ?? set.reps).map(String.init) ?? "" },
+                set: { set.minReps = Int($0) }
+            ))
             .textFieldStyle(.plain)
             .keyboardType(.numberPad)
             .frame(width: 35)
@@ -107,11 +113,11 @@ public struct SetEditRowEnhanced: View {
                 .font(.caption)
                 .foregroundColor(DynamicTheme.Colors.textSecondary)
 
-            // Max reps
-            TextField("", value: Binding(
-                get: { set.maxReps ?? set.reps ?? 0 },
-                set: { set.maxReps = $0 > 0 ? $0 : nil }
-            ), format: .number)
+            // Max — only ever its own value. Empty means "no range", and that is the truth.
+            TextField("max", text: Binding(
+                get: { set.maxReps.map(String.init) ?? "" },
+                set: { set.maxReps = Int($0) }
+            ))
             .textFieldStyle(.plain)
             .keyboardType(.numberPad)
             .frame(width: 35)
