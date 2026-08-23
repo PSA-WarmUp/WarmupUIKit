@@ -39,6 +39,15 @@ public struct PublicCardContent: View {
                     Text(card.workoutType ?? "Workout")
                         .font(DS.Typo.headline)
                         .foregroundColor(DS.Color.text)
+
+                    // Coach credit — part of what the session was, not metadata about it.
+                    // Omitted entirely when there's no trainer rather than leaving a dangling
+                    // "with".
+                    if let trainerName = card.trainerName, !trainerName.isEmpty {
+                        Text("with \(trainerName)")
+                            .font(DS.Typo.caption)
+                            .foregroundColor(DS.Color.textSec)
+                    }
                 }
 
                 Spacer()
@@ -136,6 +145,15 @@ public struct FriendsCardContent: View {
                     Text(card.workoutType ?? "Workout")
                         .font(DS.Typo.headline)
                         .foregroundColor(DS.Color.text)
+
+                    // Coach credit — part of what the session was, not metadata about it.
+                    // Omitted entirely when there's no trainer rather than leaving a dangling
+                    // "with".
+                    if let trainerName = card.trainerName, !trainerName.isEmpty {
+                        Text("with \(trainerName)")
+                            .font(DS.Typo.caption)
+                            .foregroundColor(DS.Color.textSec)
+                    }
                 }
 
                 Spacer()
@@ -274,6 +292,12 @@ public struct FullCardContent: View {
                         Text(card.workoutType ?? post.postType.displayName)
                             .font(DS.Typo.title3)
                             .foregroundColor(DS.Color.text)
+
+                        if let trainerName = card.trainerName, !trainerName.isEmpty {
+                            Text("with \(trainerName)")
+                                .font(DS.Typo.caption)
+                                .foregroundColor(DS.Color.textSec)
+                        }
                     }
 
                     Spacer()

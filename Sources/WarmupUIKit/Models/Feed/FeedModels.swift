@@ -73,6 +73,9 @@ public struct FeedItem: Codable, Identifiable {
     public let title: String?
     public let programName: String?
     public let workoutLabel: String?
+    /// The coach who programmed the session. Written onto the post when it is created, so
+    /// history stays credited to whoever actually programmed it.
+    public let trainerName: String?
     public let durationMinutes: Int?
     public let totalSets: Int?
     public let totalReps: Int?
@@ -151,6 +154,7 @@ public struct FeedItem: Codable, Identifiable {
             title: title,
             programName: programName,
             workoutLabel: workoutLabel,
+            trainerName: trainerName,
             durationMinutes: durationMinutes,
             totalSets: totalSets,
             totalReps: totalReps,
@@ -244,7 +248,8 @@ public struct FeedItem: Codable, Identifiable {
             totalSets: totalSets,
             totalReps: totalReps,
             personalRecordsCount: personalRecordsCount,
-            averageRpe: averageRpe
+            averageRpe: averageRpe,
+            trainerName: trainerName
         )
     }
 
@@ -301,6 +306,7 @@ public struct FeedItem: Codable, Identifiable {
         title: String?,
         programName: String?,
         workoutLabel: String?,
+        trainerName: String? = nil,
         durationMinutes: Int?,
         totalSets: Int?,
         totalReps: Int?,
@@ -336,6 +342,7 @@ public struct FeedItem: Codable, Identifiable {
         self.title = title
         self.programName = programName
         self.workoutLabel = workoutLabel
+        self.trainerName = trainerName
         self.durationMinutes = durationMinutes
         self.totalSets = totalSets
         self.totalReps = totalReps
@@ -489,6 +496,7 @@ public enum PostVisibility: String, Codable, CaseIterable {
 
 /// Minimal card for public viewers (Garmin-style)
 public struct PublicCardDto: Codable {
+    public let trainerName: String?
     public let workoutType: String?
     public let durationMinutes: Int?
     public let caloriesBurned: Int?
@@ -500,7 +508,8 @@ public struct PublicCardDto: Codable {
     public let totalReps: Int?
     public let personalRecordsCount: Int?
 
-    public init(workoutType: String?, durationMinutes: Int?, caloriesBurned: Int?, avgHeartRate: Int?, timeAgo: String?, caption: String?, totalSets: Int?, totalReps: Int?, personalRecordsCount: Int?) {
+    public init(workoutType: String?, durationMinutes: Int?, caloriesBurned: Int?, avgHeartRate: Int?, timeAgo: String?, caption: String?, totalSets: Int?, totalReps: Int?, personalRecordsCount: Int?, trainerName: String? = nil) {
+        self.trainerName = trainerName
         self.workoutType = workoutType
         self.durationMinutes = durationMinutes
         self.caloriesBurned = caloriesBurned
@@ -515,6 +524,7 @@ public struct PublicCardDto: Codable {
 
 /// Extended card for friends
 public struct FriendsCardDto: Codable {
+    public let trainerName: String?
     public let workoutType: String?
     public let durationMinutes: Int?
     public let caloriesBurned: Int?
@@ -531,7 +541,8 @@ public struct FriendsCardDto: Codable {
     public let personalRecordsCount: Int?
     public let averageRpe: Double?
 
-    public init(workoutType: String?, durationMinutes: Int?, caloriesBurned: Int?, avgHeartRate: Int?, totalVolume: Double?, volumeUnit: String?, distanceMiles: Double?, pace: String?, caption: String?, timeAgo: String?, totalSets: Int?, totalReps: Int?, personalRecordsCount: Int?, averageRpe: Double?) {
+    public init(workoutType: String?, durationMinutes: Int?, caloriesBurned: Int?, avgHeartRate: Int?, totalVolume: Double?, volumeUnit: String?, distanceMiles: Double?, pace: String?, caption: String?, timeAgo: String?, totalSets: Int?, totalReps: Int?, personalRecordsCount: Int?, averageRpe: Double?, trainerName: String? = nil) {
+        self.trainerName = trainerName
         self.workoutType = workoutType
         self.durationMinutes = durationMinutes
         self.caloriesBurned = caloriesBurned
@@ -551,6 +562,7 @@ public struct FriendsCardDto: Codable {
 
 /// Full detail card for trainer/client/self views
 public struct FullCardDto: Codable {
+    public let trainerName: String?
     public let workoutType: String?
     public let durationMinutes: Int?
     public let caloriesBurned: Int?
@@ -574,7 +586,8 @@ public struct FullCardDto: Codable {
     public let personalRecordsCount: Int?
     public let averageRpe: Double?
 
-    public init(workoutType: String?, durationMinutes: Int?, caloriesBurned: Int?, avgHeartRate: Int?, totalVolume: Double?, volumeUnit: String?, distanceMiles: Double?, pace: String?, programName: String?, workoutLabel: String?, exercises: [ExerciseHighlightDto]?, rpe: Int?, trainerNotes: String?, clientReflection: String?, caption: String?, prFlags: [String]?, timeAgo: String?, totalSets: Int?, totalReps: Int?, personalRecordsCount: Int?, averageRpe: Double?) {
+    public init(workoutType: String?, durationMinutes: Int?, caloriesBurned: Int?, avgHeartRate: Int?, totalVolume: Double?, volumeUnit: String?, distanceMiles: Double?, pace: String?, programName: String?, workoutLabel: String?, exercises: [ExerciseHighlightDto]?, rpe: Int?, trainerNotes: String?, clientReflection: String?, caption: String?, prFlags: [String]?, timeAgo: String?, totalSets: Int?, totalReps: Int?, personalRecordsCount: Int?, averageRpe: Double?, trainerName: String? = nil) {
+        self.trainerName = trainerName
         self.workoutType = workoutType
         self.durationMinutes = durationMinutes
         self.caloriesBurned = caloriesBurned
