@@ -68,6 +68,11 @@ public struct FeedCardView: View {
                     .foregroundColor(DS.Color.text)
                     .fixedSize(horizontal: false, vertical: true)
                     .frame(maxWidth: .infinity, alignment: .leading)
+                    // The card itself has no horizontal padding — the header and each card
+                    // variant pad themselves. The caption didn't, so it ran to the very edge
+                    // and read as though it were clipped.
+                    .padding(.horizontal, DS.Space.cardPad)
+                    .padding(.bottom, DS.Space.v8)
             }
 
             switch post.postType {

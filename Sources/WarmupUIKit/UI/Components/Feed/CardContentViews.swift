@@ -18,6 +18,12 @@ public struct PublicCardContent: View {
         self.card = card
     }
 
+    /// True when at least one metric will actually draw.
+    private var hasMetrics: Bool {
+        (card.durationMinutes ?? 0) > 0 || (card.totalSets ?? 0) > 0
+            || (card.totalReps ?? 0) > 0 || (card.caloriesBurned ?? 0) > 0
+    }
+
     public var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             // Card header with workout type
@@ -58,33 +64,31 @@ public struct PublicCardContent: View {
             }
             .padding(DS.Space.cardPad)
 
-            Divider().background(DS.Color.hairline)
-
-            // Metrics grid
-            HStack(spacing: 0) {
-                if let duration = card.durationMinutes {
-                    metricItem(icon: "clock.fill", value: formatDuration(duration), label: "Duration", color: DS.Color.primary)
-                }
-                if let sets = card.totalSets, sets > 0 {
-                    metricItem(icon: "repeat", value: "\(sets)", label: "Sets", color: DS.Color.info)
-                }
-                if let reps = card.totalReps, reps > 0 {
-                    metricItem(icon: "figure.strengthtraining.traditional", value: "\(reps)", label: "Reps", color: DS.Color.success)
-                }
-                if let calories = card.caloriesBurned, calories > 0 {
-                    metricItem(icon: "flame.fill", value: "\(calories)", label: "Cal", color: DS.Color.warning)
-                }
-            }
-            .padding(.vertical, DS.Space.cardPad)
-
-            if let caption = card.caption, !caption.isEmpty {
+            // A summary post has no metrics at all, so the divider and grid would otherwise
+            // draw an empty band the height of the padding.
+            if hasMetrics {
                 Divider().background(DS.Color.hairline)
-                Text(caption)
-                    .font(DS.Typo.body)
-                    .foregroundColor(DS.Color.textSec)
-                    .lineLimit(2)
-                    .padding(DS.Space.cardPad)
+
+                HStack(spacing: 0) {
+                    if let duration = card.durationMinutes, duration > 0 {
+                        metricItem(icon: "clock.fill", value: formatDuration(duration), label: "Duration", color: DS.Color.primary)
+                    }
+                    if let sets = card.totalSets, sets > 0 {
+                        metricItem(icon: "repeat", value: "\(sets)", label: "Sets", color: DS.Color.info)
+                    }
+                    if let reps = card.totalReps, reps > 0 {
+                        metricItem(icon: "figure.strengthtraining.traditional", value: "\(reps)", label: "Reps", color: DS.Color.success)
+                    }
+                    if let calories = card.caloriesBurned, calories > 0 {
+                        metricItem(icon: "flame.fill", value: "\(calories)", label: "Cal", color: DS.Color.warning)
+                    }
+                }
+                .padding(.vertical, DS.Space.cardPad)
             }
+
+            // Caption intentionally NOT repeated here — FeedCardView renders
+            // post.displayCaption above this card, and both resolve to the same string, so a
+            // weekly summary showed its sentence twice with a divider between.
         }
     }
 
@@ -168,7 +172,7 @@ public struct FriendsCardContent: View {
 
             // Primary metrics
             HStack(spacing: 0) {
-                if let duration = card.durationMinutes {
+                if let duration = card.durationMinutes, duration > 0 {
                     metricItem(icon: "clock.fill", value: formatDuration(duration), label: "Duration", color: DS.Color.primary)
                 }
                 if let sets = card.totalSets, sets > 0 {
@@ -317,7 +321,7 @@ public struct FullCardContent: View {
 
             // Metrics grid
             HStack(spacing: 0) {
-                if let duration = card.durationMinutes {
+                if let duration = card.durationMinutes, duration > 0 {
                     metricItem(icon: "clock.fill", value: formatDuration(duration), label: "Duration", color: DS.Color.primary)
                 }
                 if let sets = card.totalSets, sets > 0 {
