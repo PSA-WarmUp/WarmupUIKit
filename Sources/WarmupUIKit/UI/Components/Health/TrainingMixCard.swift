@@ -16,9 +16,9 @@ import SwiftUI
 
 public struct TrainingMixCard: View {
     public struct Row: Identifiable {
-        let pattern: MovementPattern
-        let done: Int
-        let prescribed: Int
+        public let pattern: MovementPattern
+        public let done: Int
+        public let prescribed: Int
 
         public init(pattern: MovementPattern, done: Int, prescribed: Int) {
             self.pattern = pattern
@@ -29,9 +29,9 @@ public struct TrainingMixCard: View {
     }
 
 
-    let rows: [Row]
-    let strengthShare: Double   // 0…1
-    let cardioShare: Double     // 0…1
+    public let rows: [Row]
+    public let strengthShare: Double   // 0…1
+    public let cardioShare: Double     // 0…1
     public let subject: HealthSubject
 
     public init(rows: [Row], strengthShare: Double, cardioShare: Double,

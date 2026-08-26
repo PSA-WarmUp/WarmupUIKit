@@ -16,7 +16,7 @@ import SwiftUI
 public struct ConsistencyCard: View {
     public struct Cell: Identifiable {
         public enum State { case trained, missed, rest }
-        let state: State
+        public let state: State
         public let id = UUID()
 
         public init(state: State) {
@@ -25,8 +25,8 @@ public struct ConsistencyCard: View {
     }
 
     /// Seven rows (Mon…Sun), each with one cell per week, oldest week first.
-    let rows: [[Cell]]
-    let weekCount: Int
+    public let rows: [[Cell]]
+    public let weekCount: Int
 
     public init(rows: [[Cell]], weekCount: Int) {
         self.rows = rows

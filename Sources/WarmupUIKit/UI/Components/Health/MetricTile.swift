@@ -12,16 +12,16 @@
 import SwiftUI
 
 public struct MetricTile: View {
-    let title: String
-    let icon: String
-    let value: String
-    let unit: String?
-    let measuredAt: Date?
-    let baseline: MetricBaseline?
-    let rawValue: Double
-    let direction: MetricDirection
+    public let title: String
+    public let icon: String
+    public let value: String
+    public let unit: String?
+    public let measuredAt: Date?
+    public let baseline: MetricBaseline?
+    public let rawValue: Double
+    public let direction: MetricDirection
     /// Last 30 days, oldest first — drawn as a sparkline when there's enough to show a shape.
-    let series: [Double]
+    public let series: [Double]
     public let subject: HealthSubject
 
     public init(title: String, icon: String, value: String, unit: String?, measuredAt: Date?,

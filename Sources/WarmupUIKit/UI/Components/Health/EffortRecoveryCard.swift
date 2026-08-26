@@ -14,10 +14,10 @@ import SwiftUI
 
 public struct EffortRecoveryCard: View {
     public struct Session: Identifiable {
-        let date: Date
-        let rpe: Double
+        public let date: Date
+        public let rpe: Double
         /// Hours slept the night before this session. Nil when we have no reading for it.
-        let sleepBefore: Double?
+        public let sleepBefore: Double?
         public var id: Date { date }
 
         public init(date: Date, rpe: Double, sleepBefore: Double?) {
@@ -27,10 +27,10 @@ public struct EffortRecoveryCard: View {
         }
     }
 
-    let sessions: [Session]          // oldest first
-    let averageRpe: Double?
-    let prescribedRpe: Double?
-    let personalRecords: Int
+    public let sessions: [Session]          // oldest first
+    public let averageRpe: Double?
+    public let prescribedRpe: Double?
+    public let personalRecords: Int
 
     public init(sessions: [Session], averageRpe: Double?, prescribedRpe: Double?,
                 personalRecords: Int) {

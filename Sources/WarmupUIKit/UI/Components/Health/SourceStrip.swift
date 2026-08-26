@@ -16,11 +16,11 @@ import SwiftUI
 
 public struct SourceStrip: View {
     /// Newest connected-health reading, nil when nothing has ever synced.
-    let newestReading: Date?
+    public let newestReading: Date?
     /// Device that produced it — "Apple Watch", "Oura", "Whoop". Never hardcoded.
-    let deviceName: String?
-    let isHealthAuthorized: Bool
-    let sessionsThisWeek: Int
+    public let deviceName: String?
+    public let isHealthAuthorized: Bool
+    public let sessionsThisWeek: Int
 
     public init(newestReading: Date?, deviceName: String?, isHealthAuthorized: Bool,
                 sessionsThisWeek: Int) {

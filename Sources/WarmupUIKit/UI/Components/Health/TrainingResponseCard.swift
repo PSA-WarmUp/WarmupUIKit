@@ -17,13 +17,13 @@ import SwiftUI
 
 public struct TrainingResponseCard: View {
     /// Weekly totals, oldest first. Volume when it's been logged, else session count.
-    let weeklyLoad: [Double]
+    public let weeklyLoad: [Double]
     /// Recovery signal over the same weeks, oldest first. Usually HRV.
-    let weeklyRecovery: [Double]
-    let recoveryLabel: String
-    let loadLabel: String
+    public let weeklyRecovery: [Double]
+    public let recoveryLabel: String
+    public let loadLabel: String
     /// Nil when there's no health data — the card still works, it just says less.
-    let hasHealthData: Bool
+    public let hasHealthData: Bool
     /// Whose training and recovery this is. Defaults to the reader's own.
     public let subject: HealthSubject
 

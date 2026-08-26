@@ -12,9 +12,9 @@
 import SwiftUI
 
 public struct BaselineBand: View {
-    let baseline: MetricBaseline
-    let value: Double
-    let direction: MetricDirection
+    public let baseline: MetricBaseline
+    public let value: Double
+    public let direction: MetricDirection
 
     public init(baseline: MetricBaseline, value: Double, direction: MetricDirection) {
         self.baseline = baseline

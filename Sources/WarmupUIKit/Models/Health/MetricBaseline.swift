@@ -14,12 +14,12 @@ import Foundation
 
 public struct MetricBaseline {
     /// Low edge of "normal" — the 10th percentile of the window.
-    let low: Double
+    public let low: Double
     /// High edge — the 90th.
-    let high: Double
-    let median: Double
+    public let high: Double
+    public let median: Double
     /// How many readings the band was built from. Below `minimumSamples` it isn't shown at all.
-    let sampleCount: Int
+    public let sampleCount: Int
 
     public init(low: Double, high: Double, median: Double, sampleCount: Int) {
         self.low = low
