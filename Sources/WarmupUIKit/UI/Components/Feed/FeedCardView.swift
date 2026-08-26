@@ -80,9 +80,14 @@ public struct FeedCardView: View {
                 MilestoneCardContent(post: post)
             case .trainerShoutout:
                 ShoutoutCardContent(post: post)
-            case .reflection:
-                // Text-only post — the caption above IS the content. Don't fall through to a
-                // zeroed "Workout Complete" card.
+            case .reflection, .weeklySummary:
+                // Text-only posts — the caption above IS the content.
+                //
+                // A weekly summary has no workout to describe: its numbers are already in the
+                // sentence ("2 workouts, 150 minutes"). Falling through to the workout card
+                // wrapped that sentence in a "Week in Review / Weekly Summary" header that
+                // repeated it, an empty metrics band, and then the sentence again — a post
+                // nested inside a post, saying one thing three times.
                 EmptyView()
             default:
                 if let fullCard = post.effectiveFullCard {

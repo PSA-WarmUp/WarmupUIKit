@@ -130,6 +130,13 @@ public struct FriendsCardContent: View {
         self.card = card
     }
 
+    /// True when at least one primary metric will actually draw. Without this the divider and
+    /// the grid still render for a card with no numbers, leaving an empty band.
+    private var hasPrimaryMetrics: Bool {
+        (card.durationMinutes ?? 0) > 0 || (card.totalSets ?? 0) > 0
+            || (card.totalVolume ?? 0) > 0 || (card.averageRpe ?? 0) > 0
+    }
+
     public var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(spacing: DS.Space.v8) {
@@ -168,6 +175,7 @@ public struct FriendsCardContent: View {
             }
             .padding(DS.Space.cardPad)
 
+            if hasPrimaryMetrics {
             Divider().background(DS.Color.hairline)
 
             // Primary metrics
@@ -186,6 +194,7 @@ public struct FriendsCardContent: View {
                 }
             }
             .padding(.vertical, DS.Space.cardPad)
+            }
 
             // Secondary metrics
             let hasSecondary = (card.distanceMiles ?? 0) > 0 || (card.caloriesBurned ?? 0) > 0
@@ -208,15 +217,8 @@ public struct FriendsCardContent: View {
                 }
                 .padding(DS.Space.cardPad)
             }
-
-            if let caption = card.caption, !caption.isEmpty {
-                Divider().background(DS.Color.hairline)
-                Text(caption)
-                    .font(DS.Typo.body)
-                    .foregroundColor(DS.Color.text)
-                    .lineLimit(3)
-                    .padding(DS.Space.cardPad)
-            }
+            // Caption intentionally NOT repeated — FeedCardView renders post.displayCaption
+            // above this card and both resolve to the same string.
         }
     }
 
@@ -258,6 +260,13 @@ public struct FullCardContent: View {
     public init(post: FeedItem, card: FullCardDto) {
         self.post = post
         self.card = card
+    }
+
+    /// True when at least one cell of the metrics grid will draw. `rpe` is included because the
+    /// grid falls back to it when `averageRpe` is absent.
+    private var hasMetricsGrid: Bool {
+        (card.durationMinutes ?? 0) > 0 || (card.totalSets ?? 0) > 0
+            || (card.totalVolume ?? 0) > 0 || (card.averageRpe ?? 0) > 0 || card.rpe != nil
     }
 
     public var body: some View {
@@ -317,6 +326,7 @@ public struct FullCardContent: View {
             }
             .padding(DS.Space.cardPad)
 
+            if hasMetricsGrid {
             Divider().background(DS.Color.hairline)
 
             // Metrics grid
@@ -337,6 +347,7 @@ public struct FullCardContent: View {
                 }
             }
             .padding(.vertical, DS.Space.cardPad)
+            }
 
             // PR Progression bar chart
             if let prProgression = post.prProgression,
@@ -395,10 +406,8 @@ public struct FullCardContent: View {
             }
 
             // Caption
-            if let caption = card.caption, !caption.isEmpty {
-                Divider().background(DS.Color.hairline)
-                Text(caption).font(DS.Typo.body).foregroundColor(DS.Color.text).padding(DS.Space.cardPad)
-            }
+            // Caption intentionally NOT repeated — FeedCardView renders post.displayCaption
+            // above this card and both resolve to the same string.
 
             // Client reflection
             if let reflection = card.clientReflection, !reflection.isEmpty {
