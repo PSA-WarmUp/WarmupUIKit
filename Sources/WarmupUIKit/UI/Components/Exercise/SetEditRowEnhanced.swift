@@ -102,12 +102,17 @@ public struct SetEditRowEnhanced: View {
             ))
             .textFieldStyle(.plain)
             .keyboardType(.numberPad)
-            .frame(width: 35)
+            // Mono + tabular: this value changes as you type, and proportional digits made the
+            // box twitch on every keystroke.
+            .font(DS.Typo.numericMedium)
+            .monospacedDigit()
+            .frame(width: 44)
             .multilineTextAlignment(.center)
-            .padding(.horizontal, 6)
-            .padding(.vertical, 4)
-            .background(DynamicTheme.Colors.background)
-            .cornerRadius(DynamicTheme.Radius.small)
+            // The D4 convention rather than a bare fill. In light mode the old #F5F5F7 fill sat
+            // on a #F0F0F2 card and these barely read as inputs at all; the hairline is what
+            // makes an editable value look editable. It also brings the 44pt tap target with it
+            // — these were about 25pt tall, which is a small thing to hit mid-session.
+            .dsInteractiveField(glyph: .none, fillWidth: false)
 
             Text("-")
                 .font(.caption)
@@ -120,12 +125,17 @@ public struct SetEditRowEnhanced: View {
             ))
             .textFieldStyle(.plain)
             .keyboardType(.numberPad)
-            .frame(width: 35)
+            // Mono + tabular: this value changes as you type, and proportional digits made the
+            // box twitch on every keystroke.
+            .font(DS.Typo.numericMedium)
+            .monospacedDigit()
+            .frame(width: 44)
             .multilineTextAlignment(.center)
-            .padding(.horizontal, 6)
-            .padding(.vertical, 4)
-            .background(DynamicTheme.Colors.background)
-            .cornerRadius(DynamicTheme.Radius.small)
+            // The D4 convention rather than a bare fill. In light mode the old #F5F5F7 fill sat
+            // on a #F0F0F2 card and these barely read as inputs at all; the hairline is what
+            // makes an editable value look editable. It also brings the 44pt tap target with it
+            // — these were about 25pt tall, which is a small thing to hit mid-session.
+            .dsInteractiveField(glyph: .none, fillWidth: false)
 
             Text("reps")
                 .font(.caption)
@@ -146,12 +156,11 @@ public struct SetEditRowEnhanced: View {
             ))
             .textFieldStyle(.plain)
             .keyboardType(.decimalPad)
-            .frame(width: 68)
+            .font(DS.Typo.numericMedium)
+            .monospacedDigit()
+            .frame(width: 72)
             .multilineTextAlignment(.center)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 6)
-            .background(DynamicTheme.Colors.background)
-            .cornerRadius(DynamicTheme.Radius.small)
+            .dsInteractiveField(glyph: .none, fillWidth: false)
         }
     }
 
