@@ -188,12 +188,12 @@ public struct DynamicTheme {
         // Small styles - added light variants for tertiary text
         public static let footnote = Font.system(size: 13, weight: .regular)
         public static let footnoteLight = Font.system(size: 13, weight: .light)
-        public static let caption = Font.system(size: 12, weight: .regular)
-        public static let captionMedium = Font.system(size: 12, weight: .medium)
-        public static let captionLight = Font.system(size: 12, weight: .light)
+        public static let caption = Font.system(size: 13, weight: .regular)
+        public static let captionMedium = Font.system(size: 13, weight: .medium)
+        public static let captionLight = Font.system(size: 13, weight: .light)
 
         // Micro text for badges, tags
-        public static let micro = Font.system(size: 10, weight: .medium, design: .monospaced)
+        public static let micro = Font.system(size: 11, weight: .medium, design: .monospaced)
     }
 
     public struct Animations {

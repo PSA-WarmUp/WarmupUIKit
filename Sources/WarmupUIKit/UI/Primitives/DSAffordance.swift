@@ -28,8 +28,16 @@ import SwiftUI
 /// Whether an element advertises that it can be interacted with, or reads as
 /// a plain static label. This is the single knob the D4 convention turns.
 public enum DSAffordance {
-    /// Tappable / editable: gets a tap target, border + fill, optional glyph.
+    /// Tappable: gets a tap target, border + fill, and a glyph naming the result.
     case interactive
+    /// Editable in place: the interactive container plus a pencil, and a focus ring that
+    /// makes "I am typing here" unambiguous.
+    ///
+    /// Split out from `.interactive` because they answer different questions. A tappable row
+    /// says "this goes somewhere"; an editable field says "this value is yours to change".
+    /// Rendering them identically is why clients could not tell which values they could edit
+    /// and which ones the app had decided for them.
+    case editable
     /// Read-only: rendered plain, with no interactive chrome.
     case `static`
 }
@@ -89,13 +97,13 @@ public struct DSAffordanceModifier: ViewModifier {
             // of the convention is that static text carries no affordance.
             content
 
-        case .interactive:
+        case .interactive, .editable:
             HStack(spacing: DS.Space.v8) {
                 content
                 if fillWidth {
                     Spacer(minLength: DS.Space.v8)
                 }
-                if let name = glyph.systemName {
+                if let name = resolvedGlyph.systemName {
                     Image(systemName: name)
                         .dsIcon(DS.Icon.sm, weight: .semibold)
                         .foregroundStyle(glyphColor)
@@ -117,6 +125,13 @@ public struct DSAffordanceModifier: ViewModifier {
             .contentShape(Rectangle())
             .dsAnimation(DS.Motion.tap, value: isEmphasized)
         }
+    }
+
+    /// An editable field always advertises the pencil, even when the caller passed nothing —
+    /// the glyph IS how "you can change this" is said. A tappable row keeps whatever it asked for.
+    private var resolvedGlyph: DSAffordanceGlyph {
+        if affordance == .editable, glyph == .chevron || glyph == .none { return .edit }
+        return glyph
     }
 
     private var borderColor: Color {
@@ -178,6 +193,12 @@ public extension View {
     /// interactive chrome. The passive half of the D4 convention.
     func dsStaticLabel() -> some View {
         dsAffordance(.static)
+    }
+
+    /// Marks a value the user can change in place. Carries the pencil by default; pass
+    /// `isEmphasized: true` while the field has focus so the border grows to the accent.
+    func dsEditableField(isEmphasized: Bool = false, fillWidth: Bool = true) -> some View {
+        dsAffordance(.editable, glyph: .edit, isEmphasized: isEmphasized, fillWidth: fillWidth)
     }
 }
 

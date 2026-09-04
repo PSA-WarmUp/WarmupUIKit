@@ -150,6 +150,11 @@ public enum DS {
 
     /// Titles in the system text face; every numeral in mono.
     ///
+    /// The small end was raised a step in Sept 2026 — caption and its numeric twin 12 -> 13,
+    /// subheadline 13 -> 14, callout 14 -> 15. Clients liked the hierarchy and could not read
+    /// the bottom of it, so the ratios are unchanged and only the floor moved. Anything below
+    /// 13pt now is a bug.
+    ///
     /// Rounded numerals read friendly-consumer; monospaced numerals read instrument. That swap
     /// is the biggest visual change in this system, and it is why a column of figures now lines
     /// up: pair these with `.dsFigures()` so the digits are tabular as well as mono.
@@ -170,14 +175,14 @@ public enum DS {
         public static let body = Font.system(size: 15, weight: .regular)
         /// 15pt medium default
         public static let bodyMedium = Font.system(size: 15, weight: .medium)
-        /// 14pt regular default
-        public static let callout = Font.system(size: 14, weight: .regular)
-        /// 14pt medium default
-        public static let calloutMedium = Font.system(size: 14, weight: .medium)
-        /// 12pt regular default
-        public static let caption = Font.system(size: 12, weight: .regular)
-        /// 12pt medium default
-        public static let captionMedium = Font.system(size: 12, weight: .medium)
+        /// 15pt regular default
+        public static let callout = Font.system(size: 15, weight: .regular)
+        /// 15pt medium default
+        public static let calloutMedium = Font.system(size: 15, weight: .medium)
+        /// 13pt regular default — the floor for anything a user has to read
+        public static let caption = Font.system(size: 13, weight: .regular)
+        /// 13pt medium default
+        public static let captionMedium = Font.system(size: 13, weight: .medium)
         /// 11pt semibold mono, uppercase, +0.5 tracking (applied via `.dsEyebrow()`)
         public static let eyebrow = Font.system(size: 11, weight: .semibold, design: .monospaced)
         /// 40pt semibold mono — hero stat numbers
@@ -186,8 +191,8 @@ public enum DS {
         public static let statMedium = Font.system(size: 24, weight: .semibold, design: .monospaced)
         /// 15pt semibold default — headline/emphasized body
         public static let headline = Font.system(size: 15, weight: .semibold)
-        /// 13pt regular default — subheadline
-        public static let subheadline = Font.system(size: 13, weight: .regular)
+        /// 14pt regular default — subheadline
+        public static let subheadline = Font.system(size: 14, weight: .regular)
 
         // MARK: Numerals inline in text
         //
@@ -201,8 +206,8 @@ public enum DS {
         public static let numericMedium = Font.system(size: 15, weight: .medium, design: .monospaced)
         /// 14pt mono — a figure in a callout row
         public static let numericCallout = Font.system(size: 14, weight: .medium, design: .monospaced)
-        /// 12pt mono — a figure in a caption or table cell
-        public static let numericCaption = Font.system(size: 12, weight: .regular, design: .monospaced)
+        /// 13pt mono — a figure in a caption or table cell
+        public static let numericCaption = Font.system(size: 13, weight: .regular, design: .monospaced)
     }
 
     // MARK: - Tracking
