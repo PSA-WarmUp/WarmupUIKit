@@ -9,6 +9,9 @@
 import SwiftUI
 
 public struct FeedCardView: View {
+    /// Opens a coach from a post's "with …" credit. Nil keeps it as plain text, which is what
+    /// the trainer app rendered for months — the shared card had the name and no way to use it.
+    public var onTrainerTap: ((String) -> Void)? = nil
     public let post: FeedItem
     public let onLike: () -> Void
     public let onComment: () -> Void
@@ -91,11 +94,11 @@ public struct FeedCardView: View {
                 EmptyView()
             default:
                 if let fullCard = post.effectiveFullCard {
-                    FullCardContent(post: post, card: fullCard)
+                    FullCardContent(onTrainerTap: onTrainerTap, post: post, card: fullCard)
                 } else if let friendsCard = post.friendsCard {
-                    FriendsCardContent(post: post, card: friendsCard)
+                    FriendsCardContent(onTrainerTap: onTrainerTap, post: post, card: friendsCard)
                 } else if let publicCard = post.publicCard {
-                    PublicCardContent(post: post, card: publicCard)
+                    PublicCardContent(onTrainerTap: onTrainerTap, post: post, card: publicCard)
                 } else {
                     MinimalCardContent(post: post)
                 }

@@ -10,10 +10,13 @@ import SwiftUI
 
 // MARK: - Public Card Content (Minimal - Card Style)
 public struct PublicCardContent: View {
+    /// Opens a coach from the "with …" credit. Nil leaves it as plain text — see CoachCredit.
+    public var onTrainerTap: ((String) -> Void)? = nil
     public let post: FeedItem
     public let card: PublicCardDto
 
-    public init(post: FeedItem, card: PublicCardDto) {
+    public init(onTrainerTap: ((String) -> Void)? = nil, post: FeedItem, card: PublicCardDto) {
+        self.onTrainerTap = onTrainerTap
         self.post = post
         self.card = card
     }
@@ -50,9 +53,7 @@ public struct PublicCardContent: View {
                     // Omitted entirely when there's no trainer rather than leaving a dangling
                     // "with".
                     if let trainerName = card.trainerName, !trainerName.isEmpty {
-                        Text("with \(trainerName)")
-                            .font(DS.Typo.caption)
-                            .foregroundColor(DS.Color.textSec)
+                        CoachCredit(trainerName: trainerName, trainerId: card.trainerId, onTap: onTrainerTap)
                     }
                 }
 
@@ -122,10 +123,13 @@ public struct PublicCardContent: View {
 
 // MARK: - Friends Card Content (Extended)
 public struct FriendsCardContent: View {
+    /// Opens a coach from the "with …" credit. Nil leaves it as plain text — see CoachCredit.
+    public var onTrainerTap: ((String) -> Void)? = nil
     public let post: FeedItem
     public let card: FriendsCardDto
 
-    public init(post: FeedItem, card: FriendsCardDto) {
+    public init(onTrainerTap: ((String) -> Void)? = nil, post: FeedItem, card: FriendsCardDto) {
+        self.onTrainerTap = onTrainerTap
         self.post = post
         self.card = card
     }
@@ -161,9 +165,7 @@ public struct FriendsCardContent: View {
                     // Omitted entirely when there's no trainer rather than leaving a dangling
                     // "with".
                     if let trainerName = card.trainerName, !trainerName.isEmpty {
-                        Text("with \(trainerName)")
-                            .font(DS.Typo.caption)
-                            .foregroundColor(DS.Color.textSec)
+                        CoachCredit(trainerName: trainerName, trainerId: card.trainerId, onTap: onTrainerTap)
                     }
                 }
 
@@ -254,10 +256,13 @@ public struct FriendsCardContent: View {
 
 // MARK: - Full Card Content (Trainer/Client/Self)
 public struct FullCardContent: View {
+    /// Opens a coach from the "with …" credit. Nil leaves it as plain text — see CoachCredit.
+    public var onTrainerTap: ((String) -> Void)? = nil
     public let post: FeedItem
     public let card: FullCardDto
 
-    public init(post: FeedItem, card: FullCardDto) {
+    public init(onTrainerTap: ((String) -> Void)? = nil, post: FeedItem, card: FullCardDto) {
+        self.onTrainerTap = onTrainerTap
         self.post = post
         self.card = card
     }
@@ -307,9 +312,7 @@ public struct FullCardContent: View {
                             .foregroundColor(DS.Color.text)
 
                         if let trainerName = card.trainerName, !trainerName.isEmpty {
-                            Text("with \(trainerName)")
-                                .font(DS.Typo.caption)
-                                .foregroundColor(DS.Color.textSec)
+                            CoachCredit(trainerName: trainerName, trainerId: card.trainerId, onTap: onTrainerTap)
                         }
                     }
 
@@ -586,5 +589,45 @@ public struct MetricView: View {
             Text(label).font(DS.Typo.caption).foregroundColor(DS.Color.textTer)
         }
         .frame(minWidth: 60)
+    }
+}
+
+// MARK: - Coach credit
+
+/// "with Anthony Perez" — a link when we know who that is, plain text when we don't.
+///
+/// The client app's own feed card made this tappable months ago; the shared card the TRAINER
+/// app renders never did, because the shared DTOs carried a trainerName and no trainerId. So a
+/// coach could read another coach's name on a post and had no way to open them, while a client
+/// looking at the same post could. Two feed cards, built separately, drifting.
+///
+/// The destination differs per app — the client pushes TrainerProfileLoaderView, the trainer
+/// pushes StorefrontPreviewView — so the kit takes a callback rather than owning the
+/// navigation, and stays plain text when nobody wires one.
+struct CoachCredit: View {
+    let trainerName: String
+    let trainerId: String?
+    let onTap: ((String) -> Void)?
+
+    var body: some View {
+        if let trainerId, !trainerId.isEmpty, let onTap {
+            Button { onTap(trainerId) } label: {
+                HStack(spacing: 3) {
+                    Text("with \(trainerName)")
+                        .font(DS.Typo.caption)
+                        .foregroundColor(DS.Tone.accent)
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 9, weight: .semibold))
+                        .foregroundColor(DS.Tone.accent)
+                }
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("View \(trainerName)'s profile")
+        } else {
+            Text("with \(trainerName)")
+                .font(DS.Typo.caption)
+                .foregroundColor(DS.Color.textSec)
+        }
     }
 }
