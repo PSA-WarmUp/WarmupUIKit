@@ -345,7 +345,7 @@ public struct MilestoneCardContent: View {
         .padding(.vertical, DS.Space.v20)
         .background(
             LinearGradient(
-                colors: [DS.Color.warning.opacity(0.1), DS.Color.warning.opacity(0.05)],
+                colors: [DS.Color.warningSoft, DS.Color.warningSoft],
                 startPoint: .top,
                 endPoint: .bottom
             )
