@@ -25,8 +25,10 @@ public struct FeedCardView: View {
         onComment: @escaping () -> Void,
         onMore: @escaping () -> Void,
         onTap: @escaping () -> Void,
-        onCongrats: (() -> Void)? = nil
+        onCongrats: (() -> Void)? = nil,
+        onTrainerTap: ((String) -> Void)? = nil
     ) {
+        self.onTrainerTap = onTrainerTap
         self.post = post
         self.onLike = onLike
         self.onComment = onComment
