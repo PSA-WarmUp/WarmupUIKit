@@ -46,10 +46,12 @@ public extension View {
 // work; new code should use the modifier.
 
 public extension View {
-    func dsLargeTitle() -> some View { self.font(DS.TypoX.largeTitle) }
-    func dsTitle1() -> some View     { self.font(DS.TypoX.title1) }
-    func dsTitle2() -> some View     { self.font(DS.TypoX.title2) }
-    func dsTitle3() -> some View     { self.font(DS.TypoX.title3) }
+    // Titles carry negative tracking; SwiftUI puts tracking on the view rather than the font,
+    // so these are the only place it can live and still come for free at every call site.
+    func dsLargeTitle() -> some View { self.font(DS.TypoX.largeTitle).tracking(DS.Track.display) }
+    func dsTitle1() -> some View     { self.font(DS.TypoX.title1).tracking(DS.Track.title1) }
+    func dsTitle2() -> some View     { self.font(DS.TypoX.title2).tracking(DS.Track.title2) }
+    func dsTitle3() -> some View     { self.font(DS.TypoX.title3).tracking(DS.Track.title3) }
     func dsHeadline() -> some View   { self.font(DS.TypoX.headline) }
     func dsBody() -> some View       { self.font(DS.TypoX.body) }
     func dsBodyMedium() -> some View { self.font(DS.TypoX.bodyMedium) }
@@ -64,8 +66,37 @@ public extension View {
             .tracking(0.5)
             .textCase(.uppercase)
     }
-    func dsStat() -> some View       { self.font(DS.TypoX.stat) }
-    func dsStatMedium() -> some View { self.font(DS.TypoX.statMedium) }
+    func dsStat() -> some View       { self.font(DS.TypoX.stat).dsFigures() }
+    func dsStatMedium() -> some View { self.font(DS.TypoX.statMedium).dsFigures() }
+
+    // MARK: Figures
+    //
+    // Mono alone isn't enough: SF's default numerals are proportional, so a column of them
+    // still shuffles left and right as the value changes. Tabular figures are what make a
+    // stack of readings scan as a table and a live counter stop twitching.
+
+    /// Lock digits to equal width. Free to apply; costs nothing when there are no digits.
+    func dsFigures() -> some View { self.monospacedDigit() }
+
+    /// A figure inline in body copy — reps, a weight, a percentage.
+    func dsNumeric() -> some View { self.font(DS.TypoX.numeric).dsFigures() }
+    func dsNumericMedium() -> some View { self.font(DS.TypoX.numericMedium).dsFigures() }
+    func dsNumericCallout() -> some View { self.font(DS.TypoX.numericCallout).dsFigures() }
+    func dsNumericCaption() -> some View { self.font(DS.TypoX.numericCaption).dsFigures() }
+}
+
+// MARK: - Press
+
+public extension View {
+    /// The system's press feedback: a 0.97 scale, never a colour swap.
+    ///
+    /// Colour-swapping a press means inventing a second brand step for every tinted surface,
+    /// and they never agree. Scale reads the same on every fill.
+    func dsPressable(_ isPressed: Bool) -> some View {
+        self
+            .scaleEffect(isPressed ? DS.Motion.pressScale : 1)
+            .animation(DS.Motion.tap, value: isPressed)
+    }
 }
 
 // MARK: - Card with shadow

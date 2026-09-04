@@ -119,32 +119,37 @@ public extension DS {
 // MARK: - Motion (with reduce-motion)
 
 public extension DS.Motion {
-    /// Quick tap response. Linear when reduce-motion is enabled.
+    /// Quick tap response — 250ms on the system curve.
     static var tap: Animation {
         UIAccessibility.isReduceMotionEnabled
             ? .linear(duration: 0)
-            : .spring(response: 0.25, dampingFraction: 0.85)
+            : .timingCurve(0.2, 0.8, 0.2, 1, duration: 0.25)
     }
 
-    /// Sheet/modal transitions.
+    /// Sheet/modal transitions — 400ms.
     static var sheet: Animation {
         UIAccessibility.isReduceMotionEnabled
             ? .linear(duration: 0.1)
-            : .spring(response: 0.4, dampingFraction: 0.85)
+            : .timingCurve(0.2, 0.8, 0.2, 1, duration: 0.40)
     }
 
-    /// Snappy spring.
+    /// Snappy — a state change, 180ms.
     static var snappy: Animation {
         UIAccessibility.isReduceMotionEnabled
             ? .linear(duration: 0)
-            : .spring(response: 0.3, dampingFraction: 0.9)
+            : .timingCurve(0.2, 0.8, 0.2, 1, duration: 0.18)
     }
 
-    /// Bouncy spring (use sparingly).
+    /// Was a bouncy spring. Now the same curve as everything else.
+    ///
+    /// The source marked this "use sparingly", which in practice meant it appeared wherever
+    /// something wanted attention. A single overshooting element is the loudest thing on an
+    /// otherwise still screen, and this system doesn't raise its voice. Kept as a name so call
+    /// sites still compile; it no longer bounces.
     static var bouncy: Animation {
         UIAccessibility.isReduceMotionEnabled
             ? .linear(duration: 0)
-            : .spring(response: 0.5, dampingFraction: 0.65)
+            : .timingCurve(0.2, 0.8, 0.2, 1, duration: 0.25)
     }
 }
 
@@ -169,10 +174,15 @@ public extension DS {
         }
 
         /// Default font design per tone.
+        ///
+        /// Both apps answer `.default` now. The fork stays because the accent still differs,
+        /// but the face does not: rounded titles read consumer-app, and one product reading as
+        /// instrumentation while the other reads as a fitness tracker is not a tone difference,
+        /// it is two design systems.
         public static var titleDesign: Font.Design {
             switch current {
-            case .trainer: return .rounded
-            case .athlete: return .rounded
+            case .trainer: return .default
+            case .athlete: return .default
             }
         }
     }
@@ -187,10 +197,10 @@ public extension DS {
 
 public extension DS {
     enum TypoX {
-        public static let largeTitle = Font.system(.largeTitle, design: .rounded).weight(.bold)
-        public static let title1     = Font.system(.title, design: .rounded).weight(.bold)
-        public static let title2     = Font.system(.title2, design: .rounded).weight(.semibold)
-        public static let title3     = Font.system(.title3, design: .rounded).weight(.semibold)
+        public static let largeTitle = Font.system(.largeTitle, design: .default).weight(.bold)
+        public static let title1     = Font.system(.title, design: .default).weight(.bold)
+        public static let title2     = Font.system(.title2, design: .default).weight(.semibold)
+        public static let title3     = Font.system(.title3, design: .default).weight(.semibold)
         public static let headline   = Font.system(.headline, design: .default).weight(.semibold)
         public static let body       = Font.system(.body, design: .default).weight(.regular)
         public static let bodyMedium = Font.system(.body, design: .default).weight(.medium)
@@ -199,9 +209,14 @@ public extension DS {
         public static let subheadline = Font.system(.subheadline, design: .default).weight(.regular)
         public static let caption     = Font.system(.caption, design: .default).weight(.regular)
         public static let captionMedium = Font.system(.caption, design: .default).weight(.medium)
-        public static let eyebrow     = Font.system(.caption2, design: .default).weight(.semibold)
-        public static let stat        = Font.system(.largeTitle, design: .rounded).weight(.bold)
-        public static let statMedium  = Font.system(.title2, design: .rounded).weight(.bold)
+        public static let eyebrow     = Font.system(.caption2, design: .monospaced).weight(.semibold)
+        public static let stat        = Font.system(.largeTitle, design: .monospaced).weight(.semibold)
+        public static let statMedium  = Font.system(.title2, design: .monospaced).weight(.semibold)
+        /// Figures inline in text, at each text size.
+        public static let numeric     = Font.system(.body, design: .monospaced).weight(.regular)
+        public static let numericMedium = Font.system(.body, design: .monospaced).weight(.medium)
+        public static let numericCallout = Font.system(.callout, design: .monospaced).weight(.medium)
+        public static let numericCaption = Font.system(.caption, design: .monospaced).weight(.regular)
     }
 }
 

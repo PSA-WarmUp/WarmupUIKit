@@ -59,7 +59,8 @@ public struct PRProgressionChart: View {
                 VStack(spacing: 2) {
                     if point.isPR == true {
                         Text("\(Int(point.value))")
-                            .font(.system(size: 13, weight: .bold, design: .rounded))
+                            .font(.system(size: 13, weight: .semibold, design: .monospaced))
+                            .monospacedDigit()
                             .foregroundColor(DS.Color.primary)
                     }
 

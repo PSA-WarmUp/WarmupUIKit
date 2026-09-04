@@ -73,6 +73,35 @@ public enum DS {
         /// Brand primary — flamingo red
         public static let primary = SwiftUI.Color(hex: "#FF5857")
 
+        /// Brand hover / light step
+        public static let primaryLight = SwiftUI.Color(hex: "#FF7674")
+
+        /// Brand pressed step
+        public static let primaryPressed = SwiftUI.Color(hex: "#E04746")
+
+        /// Warm secondary — coral salmon. Never a second accent in the same view.
+        public static let secondary = SwiftUI.Color(hex: "#FF8C69")
+
+        /// Lightest warm step
+        public static let secondaryLight = SwiftUI.Color(hex: "#FFA587")
+
+        /// Barely-there brand wash for a selected row
+        public static let primaryTint = SwiftUI.Color(hex: "#FF5857").opacity(0.06)
+
+        // MARK: Provenance
+        //
+        // The most important colour rule here: coral is data that exists because a coach wrote
+        // it and a client did it (volume, sets, RPE, adherence); blue is measured by a sensor we
+        // don't own (HRV, resting HR, sleep). Because it never varies, a chart carrying both is
+        // visibly a joined chart and no tile needs a logo explaining itself. The health side
+        // stays deliberately unbranded — it may be a different provider tomorrow.
+
+        /// Data WarmUp produced
+        public static let dataLoad = SwiftUI.Color(hex: "#FF5857")
+
+        /// Data a connected health source measured
+        public static let dataBody = SwiftUI.Color(hex: "#5B8DD9")
+
         /// Soft primary fill (badges, pills)
         public static let primarySoft = SwiftUI.Color(hex: "#FF5857").opacity(0.12)
 
@@ -119,16 +148,24 @@ public enum DS {
 
     // MARK: - Typography
 
-    /// SF Pro body / SF Pro Rounded for titles + numerics
+    /// Titles in the system text face; every numeral in mono.
+    ///
+    /// Rounded numerals read friendly-consumer; monospaced numerals read instrument. That swap
+    /// is the biggest visual change in this system, and it is why a column of figures now lines
+    /// up: pair these with `.dsFigures()` so the digits are tabular as well as mono.
+    ///
+    /// Titles lost `design: .rounded` for the same reason — the interface should read as
+    /// instrumentation with an agent attached, and rounded titles fight that everywhere they
+    /// appear. Sizes and weights are unchanged, so nothing reflows.
     public enum Typo {
-        /// 32pt bold rounded, -0.8 tracking
-        public static let largeTitle = Font.system(size: 32, weight: .bold, design: .rounded)
-        /// 28pt bold rounded, -0.6 tracking
-        public static let title1 = Font.system(size: 28, weight: .bold, design: .rounded)
-        /// 20pt semibold rounded, -0.4 tracking
-        public static let title2 = Font.system(size: 20, weight: .semibold, design: .rounded)
-        /// 17pt semibold rounded, -0.2 tracking
-        public static let title3 = Font.system(size: 17, weight: .semibold, design: .rounded)
+        /// 32pt bold, -0.8 tracking
+        public static let largeTitle = Font.system(size: 32, weight: .bold)
+        /// 28pt bold, -0.6 tracking
+        public static let title1 = Font.system(size: 28, weight: .bold)
+        /// 20pt semibold, -0.4 tracking
+        public static let title2 = Font.system(size: 20, weight: .semibold)
+        /// 17pt semibold, -0.2 tracking
+        public static let title3 = Font.system(size: 17, weight: .semibold)
         /// 15pt regular default
         public static let body = Font.system(size: 15, weight: .regular)
         /// 15pt medium default
@@ -141,16 +178,45 @@ public enum DS {
         public static let caption = Font.system(size: 12, weight: .regular)
         /// 12pt medium default
         public static let captionMedium = Font.system(size: 12, weight: .medium)
-        /// 11pt semibold, uppercase, +0.5 tracking (applied via modifier)
-        public static let eyebrow = Font.system(size: 11, weight: .semibold)
-        /// 40pt bold rounded — hero stat numbers
-        public static let stat = Font.system(size: 40, weight: .bold, design: .rounded)
-        /// 24pt bold rounded — medium stat numbers
-        public static let statMedium = Font.system(size: 24, weight: .bold, design: .rounded)
+        /// 11pt semibold mono, uppercase, +0.5 tracking (applied via `.dsEyebrow()`)
+        public static let eyebrow = Font.system(size: 11, weight: .semibold, design: .monospaced)
+        /// 40pt semibold mono — hero stat numbers
+        public static let stat = Font.system(size: 40, weight: .semibold, design: .monospaced)
+        /// 24pt semibold mono — medium stat numbers
+        public static let statMedium = Font.system(size: 24, weight: .semibold, design: .monospaced)
         /// 15pt semibold default — headline/emphasized body
         public static let headline = Font.system(size: 15, weight: .semibold)
         /// 13pt regular default — subheadline
         public static let subheadline = Font.system(size: 13, weight: .regular)
+
+        // MARK: Numerals inline in text
+        //
+        // Any figure that appears mid-sentence or in a table cell — reps, weights, dates,
+        // durations, percentages. Same point sizes as the text roles they sit beside, so a
+        // number never changes the line height of the row it is in.
+
+        /// 15pt mono — a figure sitting in body copy
+        public static let numeric = Font.system(size: 15, weight: .regular, design: .monospaced)
+        /// 15pt medium mono — an emphasised figure in body copy
+        public static let numericMedium = Font.system(size: 15, weight: .medium, design: .monospaced)
+        /// 14pt mono — a figure in a callout row
+        public static let numericCallout = Font.system(size: 14, weight: .medium, design: .monospaced)
+        /// 12pt mono — a figure in a caption or table cell
+        public static let numericCaption = Font.system(size: 12, weight: .regular, design: .monospaced)
+    }
+
+    // MARK: - Tracking
+    //
+    // SwiftUI carries tracking on the view, not the font, so the ladder above can't hold it.
+    // These are the source's values; `.dsTitle*()` applies them for you.
+
+    public enum Track {
+        public static let display: CGFloat = -0.8
+        public static let title1: CGFloat = -0.6
+        public static let title2: CGFloat = -0.4
+        public static let title3: CGFloat = -0.2
+        public static let eyebrow: CGFloat = 0.5
+        public static let pill: CGFloat = 0.3
     }
 
     // MARK: - Spacing
@@ -169,6 +235,18 @@ public enum DS {
         /// Hairline stroke width
         public static let hairlineWidth: CGFloat = 0.5
 
+        /// Tightest radius — tags, inline marks
+        public static let xsRadius: CGFloat = 4
+        /// Chat bubble radius
+        public static let bubbleRadius: CGFloat = 20
+        /// Fully rounded — pills, avatars
+        public static let pillRadius: CGFloat = 999
+
+        // Button radii by size
+        public static let buttonRadiusSmall: CGFloat = 10
+        public static let buttonRadiusMedium: CGFloat = 12
+        public static let buttonRadiusLarge: CGFloat = 14
+
         // Vertical rhythm
         public static let v4: CGFloat = 4
         public static let v8: CGFloat = 8
@@ -181,10 +259,17 @@ public enum DS {
     // MARK: - Motion
 
     public enum Motion {
-        /// State change: 180ms ease-out
-        public static let stateChange = Animation.easeOut(duration: 0.18)
-        /// Reveal: 400ms ease-out
-        public static let reveal = Animation.easeOut(duration: 0.40)
+        /// The system curve. Everything decelerates into place; nothing overshoots.
+        public static let curve = Animation.timingCurve(0.2, 0.8, 0.2, 1)
+
+        /// State change: 180ms. (`tap`, `sheet`, `snappy` live in the extension alongside
+        /// their reduce-motion fallbacks.)
+        public static let stateChange = Animation.timingCurve(0.2, 0.8, 0.2, 1, duration: 0.18)
+        /// Reveal / sheet: 400ms
+        public static let reveal = Animation.timingCurve(0.2, 0.8, 0.2, 1, duration: 0.40)
+
+        /// Press scale. The source's `scaleEffect(0.97)` — a press is never a colour swap.
+        public static let pressScale: CGFloat = 0.97
     }
 }
 

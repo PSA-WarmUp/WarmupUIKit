@@ -119,38 +119,33 @@ public struct DynamicTheme {
             dark: Color(hex: "#0a0a0a").opacity(0.98)
         )
 
-        // MARK: - Gradients for richer visual hierarchy
+        // MARK: - Gradients
+        //
+        // Kept as symbols, emptied of gradient. A gradient is the loudest thing on a screen and
+        // this system is quiet: depth is read from where a surface sits on the neutral ramp, not
+        // from a wash. Each of these now resolves to a single flat colour, so the ~55 call sites
+        // across both apps keep compiling and simply stop shading.
+        //
+        // New code should use the colour directly. These remain only so nothing had to be
+        // rewritten to get the flat look.
 
-        /// Warm gradient using brand colors for onboarding and feature screens
-        public static let warmGradient = LinearGradient(
-            colors: [secondary, secondaryLight],
-            startPoint: .topLeading,
-            endPoint: .bottomTrailing
-        )
+        private static func flat(_ color: Color) -> LinearGradient {
+            LinearGradient(colors: [color, color], startPoint: .top, endPoint: .bottom)
+        }
 
-        /// Premium/paywall gradient with dark elegant tones
-        public static let premiumGradient = LinearGradient(
-            colors: [Color(hex: "#1a1a2e"), Color(hex: "#16213e"), Color(hex: "#0f3460")],
-            startPoint: .top,
-            endPoint: .bottom
-        )
+        /// Was a warm brand wash on onboarding and feature screens.
+        public static let warmGradient = flat(primary)
 
-        /// Primary brand gradient using flamingo pink tones
-        public static let primaryGradient = LinearGradient(
-            colors: [primary, primaryLight],
-            startPoint: .topLeading,
-            endPoint: .bottomTrailing
-        )
+        /// Was the dark paywall wash.
+        public static let premiumGradient = flat(Color.dynamicColor(
+            light: Color(hex: "#F0F0F2"), dark: Color(hex: "#1A1A1E")))
 
-        /// Subtle background gradient for key screens
-        public static let subtleGradient = LinearGradient(
-            colors: [
-                Color.dynamicColor(light: Color(hex: "#ffffff"), dark: Color(hex: "#0a0a0a")),
-                Color.dynamicColor(light: Color(hex: "#fef2f2"), dark: Color(hex: "#1a1a1c"))
-            ],
-            startPoint: .top,
-            endPoint: .bottom
-        )
+        /// Was the flamingo brand wash.
+        public static let primaryGradient = flat(primary)
+
+        /// Was the subtle page wash.
+        public static let subtleGradient = flat(Color.dynamicColor(
+            light: Color(hex: "#F5F5F7"), dark: Color(hex: "#0B0B0D")))
     }
 
     // Keep all the same spacing, radius, typography from Theme.swift
@@ -177,28 +172,28 @@ public struct DynamicTheme {
 
     public struct Typography {
         // Display styles - increased size jump for better hierarchy
-        public static let largeTitle = Font.system(size: 34, weight: .bold, design: .rounded)
-        public static let title = Font.system(size: 32, weight: .bold, design: .rounded)
-        public static let title2 = Font.system(size: 24, weight: .semibold, design: .rounded)
-        public static let title3 = Font.system(size: 20, weight: .semibold, design: .rounded)
+        public static let largeTitle = Font.system(size: 34, weight: .bold)
+        public static let title = Font.system(size: 32, weight: .bold)
+        public static let title2 = Font.system(size: 24, weight: .semibold)
+        public static let title3 = Font.system(size: 20, weight: .semibold)
 
         // Body styles
-        public static let headline = Font.system(size: 17, weight: .semibold, design: .rounded)
-        public static let body = Font.system(size: 16, weight: .regular, design: .rounded)
-        public static let bodyMedium = Font.system(size: 16, weight: .medium, design: .rounded)
-        public static let bodyLight = Font.system(size: 16, weight: .light, design: .rounded)
-        public static let callout = Font.system(size: 15, weight: .regular, design: .rounded)
-        public static let subheadline = Font.system(size: 14, weight: .regular, design: .rounded)
+        public static let headline = Font.system(size: 17, weight: .semibold)
+        public static let body = Font.system(size: 16, weight: .regular)
+        public static let bodyMedium = Font.system(size: 16, weight: .medium)
+        public static let bodyLight = Font.system(size: 16, weight: .light)
+        public static let callout = Font.system(size: 15, weight: .regular)
+        public static let subheadline = Font.system(size: 14, weight: .regular)
 
         // Small styles - added light variants for tertiary text
-        public static let footnote = Font.system(size: 13, weight: .regular, design: .rounded)
-        public static let footnoteLight = Font.system(size: 13, weight: .light, design: .rounded)
-        public static let caption = Font.system(size: 12, weight: .regular, design: .rounded)
-        public static let captionMedium = Font.system(size: 12, weight: .medium, design: .rounded)
-        public static let captionLight = Font.system(size: 12, weight: .light, design: .rounded)
+        public static let footnote = Font.system(size: 13, weight: .regular)
+        public static let footnoteLight = Font.system(size: 13, weight: .light)
+        public static let caption = Font.system(size: 12, weight: .regular)
+        public static let captionMedium = Font.system(size: 12, weight: .medium)
+        public static let captionLight = Font.system(size: 12, weight: .light)
 
         // Micro text for badges, tags
-        public static let micro = Font.system(size: 10, weight: .medium, design: .rounded)
+        public static let micro = Font.system(size: 10, weight: .medium, design: .monospaced)
     }
 
     public struct Animations {
@@ -259,6 +254,9 @@ public extension DynamicTheme.Colors {
         public static let primaryHover = DynamicTheme.Colors.primaryDark
         public static let primaryPressed = DynamicTheme.Colors.primaryDark
         public static let secondary = DynamicTheme.Colors.cardBackground
-        public static let disabled = DynamicTheme.Colors.textTertiary
+        /// Disabled FILL, not tertiary text. A disabled control should read as an inert
+        /// surface; tinting it like faint text made it look like a label someone forgot to
+        /// style. Pair with `DS.Color.onDisabled` for the label on top.
+        public static let disabled = DS.Color.disabled
     }
 }

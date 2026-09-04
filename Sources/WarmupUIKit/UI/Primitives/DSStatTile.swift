@@ -24,6 +24,8 @@ public struct DSStatTile: View {
 
             Text(value)
                 .font(DS.Typo.statMedium)
+                // Tabular, so a stack of tiles reads as a column and a live value stops twitching.
+                .monospacedDigit()
                 .foregroundStyle(DS.Color.text)
 
             if let subtitle = subtitle {

@@ -260,7 +260,8 @@ public struct CalendarStatusBadge: View {
 
     public var body: some View {
         Text(displayText)
-            .font(.system(size: 11, weight: .medium, design: .rounded))
+            .font(.system(size: 11, weight: .medium, design: .monospaced))
+            .monospacedDigit()
             .foregroundColor(textColor)
             .padding(.horizontal, DynamicTheme.Spacing.sm)
             .padding(.vertical, 4)
