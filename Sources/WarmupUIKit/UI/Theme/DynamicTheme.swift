@@ -33,9 +33,11 @@ public struct DynamicTheme {
             dark: Color(hex: "#1a1a1c")  // Elevated surface
         )
 
+        /// Matches DS.Color.card. Light is white on the grey page so a bare fill is enough to
+        /// read as a card; #f9fafb was half a percent off the background it sat on.
         public static let cardBackground = Color.dynamicColor(
-            light: Color(hex: "#f9fafb"),
-            dark: Color(hex: "#1f1f21")  // Cards slightly lighter than background for depth
+            light: .white,
+            dark: Color(hex: "#1A1A1E")
         )
 
         public static let bubbleBackground = Color.dynamicColor(

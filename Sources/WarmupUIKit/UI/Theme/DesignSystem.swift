@@ -28,9 +28,20 @@ public enum DS {
             dark: SwiftUI.Color(hex: "#141418")
         )
 
-        /// Card background
+        /// Card background.
+        ///
+        /// Light is WHITE on the #F5F5F7 page, not the #F0F0F2 the token table originally
+        /// carried. That value sat 2% BELOW the page it lived on, so a card drawn with a fill
+        /// and nothing else was invisible — and there are ~200 hand-drawn card fills across the
+        /// two apps that do exactly that. The spec compensates with a hairline and a light-mode
+        /// shadow, which `dsCard()` now applies, but a token that only works when every call
+        /// site remembers to add two more modifiers is the wrong token.
+        ///
+        /// White-on-grey is also what iOS does and what the rest of this app already did in
+        /// places, so the two paths finally agree. Dark is unchanged: #1A1A1E on #0B0B0D is a
+        /// real step on the ramp and needs no help.
         public static let card = SwiftUI.Color.dynamicColor(
-            light: SwiftUI.Color(hex: "#F0F0F2"),
+            light: .white,
             dark: SwiftUI.Color(hex: "#1A1A1E")
         )
 
@@ -281,24 +292,42 @@ public enum DS {
 // MARK: - DS View Modifiers
 
 extension View {
-    /// Card style: card bg, 16pt radius, no shadow
+    /// Card style: card fill, 16pt radius, hairline, and a shadow in light mode only.
+    ///
+    /// The fill alone is enough in dark, where #1A1A1E on a #0B0B0D page is a visible step on
+    /// the neutral ramp. In light it is not: #F0F0F2 on #F5F5F7 is a 2% difference, so a card
+    /// with nothing but a fill simply disappears and the screen reads as one flat sheet. That
+    /// is the whole reason the light build looked thinner than the dark one.
+    ///
+    /// So the hairline is always drawn — it is what separates a card from its page — and light
+    /// mode adds the 4/12 shadow the system specifies. Dark mode's shadow token is already
+    /// clear, because elevation there is read from the ramp rather than from a smudge.
     public func dsCard() -> some View {
         self
             .padding(DS.Space.cardPad)
-            .background(
-                RoundedRectangle(cornerRadius: DS.Space.cardRadius, style: .continuous)
-                    .fill(DS.Color.card)
-            )
+            .dsCardSurface(DS.Color.card)
     }
 
     /// Highlighted card style
     public func dsCardHi() -> some View {
         self
             .padding(DS.Space.cardPad)
+            .dsCardSurface(DS.Color.cardHi)
+    }
+
+    /// The card surface itself, without the padding — for views that own their own insets.
+    public func dsCardSurface(_ fill: Color = DS.Color.card,
+                              radius: CGFloat = DS.Space.cardRadius) -> some View {
+        self
             .background(
-                RoundedRectangle(cornerRadius: DS.Space.cardRadius, style: .continuous)
-                    .fill(DS.Color.cardHi)
+                RoundedRectangle(cornerRadius: radius, style: .continuous)
+                    .fill(fill)
             )
+            .overlay(
+                RoundedRectangle(cornerRadius: radius, style: .continuous)
+                    .stroke(DS.Color.hairline, lineWidth: DS.Space.hairlineWidth)
+            )
+            .dsShadow(DS.Shadow.card)
     }
 
     /// Surface background

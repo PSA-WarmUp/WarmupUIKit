@@ -19,9 +19,8 @@ public struct DSCard<Content: View>: View {
     public var body: some View {
         content()
             .padding(DS.Space.cardPad)
-            .background(
-                RoundedRectangle(cornerRadius: DS.Space.cardRadius, style: .continuous)
-                    .fill(highlighted ? DS.Color.cardHi : DS.Color.card)
-            )
+            // Hairline + light-mode shadow, so a card reads as a card in BOTH themes. See the
+            // note on View.dsCard(): a fill alone vanishes on a light page.
+            .dsCardSurface(highlighted ? DS.Color.cardHi : DS.Color.card)
     }
 }
