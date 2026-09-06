@@ -123,6 +123,9 @@ public enum NotificationType: String, Codable {
     // Achievement notifications
     case milestone = "MILESTONE"
 
+    // Broker / quote requests (trainer-facing)
+    case quoteRequested = "QUOTE_REQUESTED"
+
     // General/fallback (also used for unknown types)
     case general = "GENERAL"
     case unknown = "UNKNOWN"
@@ -151,6 +154,8 @@ public enum NotificationType: String, Codable {
              .consultationCancelled, .consultationReminder24h,
              .consultationReminder1h, .consultationReminder15m, .consultationRescheduled:
             return "calendar.badge.clock"
+        case .quoteRequested:
+            return "sparkles"
         case .programAssigned, .programCompleted:
             return "list.bullet.clipboard"
         case .milestone:
@@ -194,6 +199,18 @@ public struct NotificationData: Codable {
     // Follow related
     public let followId: String?
 
+    // Broker / quote-request related (trainer-facing)
+    public let quoteRequestId: String?
+    public let clientName: String?
+
+    // Scheduling
+    /// The scheduled instant as ISO-8601 WITH an offset, e.g. "2026-09-04T21:00Z".
+    ///
+    /// The sentence in `body` deliberately carries no date — only the device knows the reader's
+    /// timezone, so only the device can format one. The older `scheduledDate`/`proposedDate`
+    /// keys are still sent but carry no zone; do not read them.
+    public let scheduledAtIso: String?
+
     // Generic
     public let userId: String?
 
@@ -209,6 +226,9 @@ public struct NotificationData: Codable {
         commenterName: String? = nil,
         action: String? = nil,
         followId: String? = nil,
+        quoteRequestId: String? = nil,
+        clientName: String? = nil,
+        scheduledAtIso: String? = nil,
         userId: String? = nil
     ) {
         self.workoutId = workoutId
@@ -222,6 +242,9 @@ public struct NotificationData: Codable {
         self.commenterName = commenterName
         self.action = action
         self.followId = followId
+        self.quoteRequestId = quoteRequestId
+        self.clientName = clientName
+        self.scheduledAtIso = scheduledAtIso
         self.userId = userId
     }
 }
