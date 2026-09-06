@@ -21,5 +21,9 @@ public struct DSEyebrow: View {
             .font(DS.Typo.eyebrow)
             .tracking(0.5)
             .foregroundStyle(color)
+            // Same reasoning as DSPill: an eyebrow is a single-line label, and letting it wrap
+            // splits a word across two lines inside a header row.
+            .lineLimit(1)
+            .fixedSize(horizontal: true, vertical: false)
     }
 }

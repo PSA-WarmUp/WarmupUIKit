@@ -63,6 +63,13 @@ public struct SetEditRowEnhanced: View {
                 rpeField
                 Spacer(minLength: 0)
             }
+            // Row 3: hold time, only where the prescription is a clock rather than a count.
+            if set.duration != nil || set.isTimeBasedPrescription {
+                HStack(spacing: 14) {
+                    durationField
+                    Spacer(minLength: 0)
+                }
+            }
         }
         .padding(.vertical, 10)
         .padding(.horizontal, 12)
@@ -145,22 +152,79 @@ public struct SetEditRowEnhanced: View {
 
     // MARK: - Weight (always visible)
 
+    @ViewBuilder
     private var weightField: some View {
+        let load = set.load
+
+        if load.hidesWeightInput {
+            // A bodyweight set has no number to type. Offering a numeric field anyway is what
+            // produced a `.decimalPad` whose placeholder was the truncated word "bo…" — an input
+            // the user could not meaningfully fill, above a keyboard that could not spell it.
+            HStack(spacing: 6) {
+                Text("Load")
+                    .font(.caption)
+                    .foregroundColor(DynamicTheme.Colors.textSecondary)
+                Text(load == .unloaded ? "—" : "bodyweight")
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+                    .foregroundColor(DynamicTheme.Colors.text)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 6)
+                    .background(DynamicTheme.Colors.background)
+                    .cornerRadius(DynamicTheme.Radius.small)
+            }
+        } else {
+            HStack(spacing: 6) {
+                // A weighted pull-up still needs a field — but it is the ADDED load, and saying
+                // so is the difference between "8 × 25" and a client wondering whose 25 it is.
+                Text(load == .bodyweightPlus ? "+ Weight" : "Weight")
+                    .font(.caption)
+                    .foregroundColor(DynamicTheme.Colors.textSecondary)
+                TextField("—", text: Binding(
+                    get: { set.weight ?? "" },
+                    set: { set.weight = $0.isEmpty ? nil : $0 }
+                ))
+                .textFieldStyle(.plain)
+                .keyboardType(.decimalPad)
+                .font(DS.Typo.numericMedium)
+                .monospacedDigit()
+                .frame(width: 72)
+                .multilineTextAlignment(.center)
+                .dsInteractiveField(glyph: .none, fillWidth: false)
+
+                if let unit = set.weightUnit, !unit.isEmpty {
+                    Text(unit)
+                        .font(.caption)
+                        .foregroundColor(DynamicTheme.Colors.textSecondary)
+                }
+            }
+        }
+    }
+
+    /// Hold time, for sets measured by the clock rather than by reps.
+    ///
+    /// A plank prescribes neither reps nor load, so without somewhere to put the seconds it was
+    /// a set that prescribed nothing — which the server rejected, and the trainer read as
+    /// "the workout won't save".
+    private var durationField: some View {
         HStack(spacing: 6) {
-            Text("Weight")
+            Text("Hold")
                 .font(.caption)
                 .foregroundColor(DynamicTheme.Colors.textSecondary)
             TextField("—", text: Binding(
-                get: { set.weight ?? "" },
-                set: { set.weight = $0.isEmpty ? nil : $0 }
+                get: { set.duration.map(String.init) ?? "" },
+                set: { set.duration = Int($0) }
             ))
             .textFieldStyle(.plain)
-            .keyboardType(.decimalPad)
+            .keyboardType(.numberPad)
             .font(DS.Typo.numericMedium)
             .monospacedDigit()
-            .frame(width: 72)
+            .frame(width: 52)
             .multilineTextAlignment(.center)
             .dsInteractiveField(glyph: .none, fillWidth: false)
+            Text("sec")
+                .font(.caption)
+                .foregroundColor(DynamicTheme.Colors.textSecondary)
         }
     }
 

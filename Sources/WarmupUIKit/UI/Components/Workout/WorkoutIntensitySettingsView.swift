@@ -12,14 +12,17 @@ import SwiftUI
 /// A settings section for configuring workout-level intensity defaults
 public struct WorkoutIntensitySettingsView: View {
     @Binding public var effortType: EffortType
-    @Binding public var effortValue: Int
+    /// Double, not Int: RPE is graded in halves — 7.5 is the difference between "hard" and
+    /// "near failure" — and the prescription already stores a Double. An Int binding rounded the
+    /// coach's intent away before it ever reached the wire. RIR stays whole by stepping in 1s.
+    @Binding public var effortValue: Double
 
     public var showHeader: Bool = true
     public var isCompact: Bool = false
 
     public init(
         effortType: Binding<EffortType>,
-        effortValue: Binding<Int>,
+        effortValue: Binding<Double>,
         showHeader: Bool = true,
         isCompact: Bool = false
     ) {
@@ -70,10 +73,10 @@ public struct WorkoutIntensitySettingsView: View {
 
                     // Slider or stepper based on effort type
                     if effortType == .rpe {
-                        Slider(value: Binding(
-                            get: { Double(effortValue) },
-                            set: { effortValue = Int($0) }
-                        ), in: 1...10, step: 1)
+                        // RPE is graded in halves — 7.5 is the difference between "hard" and
+                        // "near failure", and the prescription side has always stored a Double.
+                        // A whole-number step here silently rounded the coach's intent away.
+                        Slider(value: $effortValue, in: 1...10, step: 0.5)
                         .tint(effortValueColor)
 
                         // RPE scale labels
@@ -87,10 +90,8 @@ public struct WorkoutIntensitySettingsView: View {
                                 .foregroundColor(DynamicTheme.Colors.textSecondary)
                         }
                     } else if effortType == .rir {
-                        Slider(value: Binding(
-                            get: { Double(effortValue) },
-                            set: { effortValue = Int($0) }
-                        ), in: 0...5, step: 1)
+                        // RIR counts reps left in the tank — whole numbers only.
+                        Slider(value: $effortValue, in: 0...5, step: 1)
                         .tint(effortValueColor)
 
                         // RIR scale labels
@@ -122,9 +123,9 @@ public struct WorkoutIntensitySettingsView: View {
     private var effortValueDisplay: String {
         switch effortType {
         case .rpe:
-            return "RPE \(effortValue)"
+            return "RPE \(ExerciseSet.formatRpe(effortValue))"
         case .rir:
-            return "\(effortValue) RIR"
+            return "\(Int(effortValue)) RIR"
         case .none:
             return ""
         }
@@ -202,21 +203,24 @@ public struct EffortTypePicker: View {
 
 /// A compact stepper for RPE/RIR values
 public struct EffortValueStepper: View {
-    @Binding public var value: Int
+    @Binding public var value: Double
     public let effortType: EffortType
 
-    public init(value: Binding<Int>, effortType: EffortType) {
+    public init(value: Binding<Double>, effortType: EffortType) {
         self._value = value
         self.effortType = effortType
     }
 
-    private var range: ClosedRange<Int> {
+    private var range: ClosedRange<Double> {
         switch effortType {
         case .rpe: return 1...10
         case .rir: return 0...5
         case .none: return 0...0
         }
     }
+
+    /// RPE moves in halves; RIR is a count of reps and only ever whole.
+    private var step: Double { effortType == .rpe ? 0.5 : 1 }
 
     public var body: some View {
         HStack(spacing: 8) {
@@ -226,7 +230,7 @@ public struct EffortValueStepper: View {
             }
             .disabled(value <= range.lowerBound)
 
-            Text("\(value)")
+            Text(effortType == .rpe ? ExerciseSet.formatRpe(value) : String(Int(value)))
                 .font(.headline)
                 .fontWeight(.bold)
                 .frame(minWidth: 30)
@@ -240,15 +244,11 @@ public struct EffortValueStepper: View {
     }
 
     private func increment() {
-        if value < range.upperBound {
-            value += 1
-        }
+        value = min(value + step, range.upperBound)
     }
 
     private func decrement() {
-        if value > range.lowerBound {
-            value -= 1
-        }
+        value = max(value - step, range.lowerBound)
     }
 }
 

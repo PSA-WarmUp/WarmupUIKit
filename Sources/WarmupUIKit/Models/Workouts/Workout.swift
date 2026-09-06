@@ -909,6 +909,24 @@ public struct ExerciseSet: Codable, Identifiable, Equatable, Sendable {
     public var duration: Int?
     public var rest: String?       // Store as String to match backend
     public var notes: String?
+    /// "lbs" or "kg" — the unit this was prescribed in. Null on rows predating the field.
+    public var weightUnit: String?
+    /// EXTERNAL / BODYWEIGHT / BODYWEIGHT_PLUS / UNLOADED. Nil means "resolve it" — see `load`.
+    public var loadType: String?
+    /// Server-built, read-only: "8 reps · bodyweight + 25 lbs". Prefer this over re-deriving.
+    public var displaySummary: String?
+
+    /// How this set is loaded, resolving the legacy free-text weight when no marker was sent.
+    public var load: LoadType { LoadType.resolve(marker: loadType, prescribedWeight: weight) }
+
+    /// True when this set is measured by the clock — a hold already recorded, or a set that
+    /// prescribes neither reps nor load and therefore has nothing else it could mean.
+    public var isTimeBasedPrescription: Bool {
+        if duration != nil { return true }
+        let hasReps = reps != nil || minReps != nil || maxReps != nil
+        let hasLoad = !(weight ?? "").isEmpty
+        return !hasReps && !hasLoad
+    }
 
     // Computed properties for numeric access
     public var weightValue: Double? {
@@ -970,10 +988,10 @@ public struct ExerciseSet: Codable, Identifiable, Equatable, Sendable {
             }
             return "RIR"
         case .none:
-            if let weightVal = weightValue {
-                return "\(Int(weightVal)) lbs"
-            }
-            return ""
+            // Route through the load type so a bodyweight set reads "bodyweight" instead of
+            // echoing the raw token, and so the unit is the one actually prescribed rather than
+            // a hardcoded "lbs" restating someone's kilos.
+            return load.describeLoad(weight: weightValue, unit: weightUnit) ?? ""
         }
     }
 
@@ -1036,7 +1054,13 @@ extension ExerciseSet {
             effortType: effortType,
             tempo: tempo,
             rest: rest,        // Already a String?
-            notes: notes
+            notes: notes,
+            // The unit travels with the number, the marker travels with the set, and a hold is a
+            // prescription too. Dropping any of the three here meant the server received a set
+            // that said nothing — which it then rightly rejected.
+            weightUnit: weightUnit,
+            loadType: loadType,
+            durationSeconds: duration
         )
     }
 }
@@ -1465,6 +1489,14 @@ public struct ExerciseSetDto: Codable, Sendable {
     public let tempo: String?
     public let rest: String?
     public let notes: String?
+    /// "lbs" or "kg" — the unit this was prescribed in.
+    public let weightUnit: String?
+    /// EXTERNAL / BODYWEIGHT / BODYWEIGHT_PLUS / UNLOADED. Omit and the server resolves it.
+    public let loadType: String?
+    /// Hold time for time-based sets (plank, carry, dead hang).
+    public let durationSeconds: Int?
+    /// Server-built summary, read-only — never sent.
+    public let displaySummary: String?
 
     public init(
         reps: Int? = nil,
@@ -1476,7 +1508,11 @@ public struct ExerciseSetDto: Codable, Sendable {
         effortType: String? = nil,
         tempo: String? = nil,
         rest: String? = nil,
-        notes: String? = nil
+        notes: String? = nil,
+        weightUnit: String? = nil,
+        loadType: String? = nil,
+        durationSeconds: Int? = nil,
+        displaySummary: String? = nil
     ) {
         self.reps = reps
         self.minReps = minReps
@@ -1488,6 +1524,10 @@ public struct ExerciseSetDto: Codable, Sendable {
         self.tempo = tempo
         self.rest = rest
         self.notes = notes
+        self.weightUnit = weightUnit
+        self.loadType = loadType
+        self.durationSeconds = durationSeconds
+        self.displaySummary = displaySummary
     }
 }
 

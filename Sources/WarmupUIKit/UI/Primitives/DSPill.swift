@@ -27,6 +27,13 @@ public struct DSPill: View {
             .font(DS.Typo.eyebrow)
             .tracking(0.3)
             .foregroundStyle(foreground)
+            // A pill is a label, not a paragraph. Without these the text wrapped inside its own
+            // capsule when the row got tight, breaking mid-word into "SUPERSE / T A" and
+            // "STRENGT / H". Sizing to content and refusing to wrap makes the pill hold its
+            // shape and pushes the pressure onto the flexible text beside it, which is the
+            // element that can truncate gracefully.
+            .lineLimit(1)
+            .fixedSize(horizontal: true, vertical: false)
             .padding(.horizontal, 10)
             .padding(.vertical, 4)
             .background(

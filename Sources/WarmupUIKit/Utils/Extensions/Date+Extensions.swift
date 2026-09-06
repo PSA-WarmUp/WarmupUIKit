@@ -24,58 +24,22 @@ public extension Date {
     }
 
     /// ISO8601 string with fractional seconds
-    var iso8601String: String {
-        let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-        return formatter.string(from: self)
-    }
-
+    /// UTC ISO-8601 with a `Z` and no fractional seconds.
+    ///
+    /// Used to emit `.withFractionalSeconds` unconditionally while the decode side had no
+    /// fractional fallback in some paths — the same value could be written in a form the reader
+    /// refused. One writer, one shape.
+    var iso8601String: String { WarmupDate.iso8601(self) }
     /// Parse an ISO8601 / RFC3339 timestamp from the backend, tolerant of every
     /// variation the API emits. `ISO8601DateFormatter` with `.withFractionalSeconds`
     /// REQUIRES a fraction, so the old single-formatter version returned nil for the
     /// non-fractional form (e.g. "2026-06-12T22:30:00Z") and silently dropped those
     /// workouts (empty "Today's Schedule"). This is the exact strategy the trainer
     /// app uses, where it has worked reliably.
-    static func fromISO8601String(_ string: String) -> Date? {
-        // Try with fractional seconds first (most common from backend)
-        let formatterWithFractional = ISO8601DateFormatter()
-        formatterWithFractional.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-        if let date = formatterWithFractional.date(from: string) {
-            return date
-        }
-
-        // Try without fractional seconds (with timezone)
-        let formatterStandard = ISO8601DateFormatter()
-        formatterStandard.formatOptions = [.withInternetDateTime]
-        if let date = formatterStandard.date(from: string) {
-            return date
-        }
-
-        // Try without timezone (e.g., "2025-12-31T21:50:00")
-        // Backend sends UTC time without the Z suffix, so treat as UTC
-        let formatterNoTimezone = DateFormatter()
-        formatterNoTimezone.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
-        formatterNoTimezone.locale = Locale(identifier: "en_US_POSIX")
-        formatterNoTimezone.timeZone = TimeZone(identifier: "UTC") // Treat as UTC
-        if let date = formatterNoTimezone.date(from: string) {
-            return date
-        }
-
-        // Try with fractional seconds but no timezone (e.g., "2025-12-31T21:50:00.123")
-        formatterNoTimezone.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS"
-        if let date = formatterNoTimezone.date(from: string) {
-            return date
-        }
-
-        // Try date-only format (YYYY-MM-DD)
-        let formatterDateOnly = ISO8601DateFormatter()
-        formatterDateOnly.formatOptions = [.withFullDate, .withDashSeparatorInDate]
-        if let date = formatterDateOnly.date(from: string) {
-            return date
-        }
-
-        return nil
-    }
+    /// Parse an ISO-8601 string, tolerating a missing zone.
+    ///
+    /// Delegates to `WarmupDate` so there is one parser rather than one per file.
+    static func fromISO8601String(_ string: String) -> Date? { WarmupDate.lenient(string) }
 
     /// Round date to the nearest time component
     func rounded(to component: Calendar.Component) -> Date {
