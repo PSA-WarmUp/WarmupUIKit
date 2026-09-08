@@ -74,12 +74,36 @@ public enum LoadType: String, Codable, Sendable, CaseIterable {
         }
     }
 
-    /// "12 reps · 100 lbs". `reps` is passed as text so a range ("8-12") reads naturally.
-    public func describeSet(reps: String?, weight: Double?, unit: String?) -> String {
+    /// "12 reps · 100 lbs", "45s · bodyweight". `reps` is passed as text so a range ("8-12")
+    /// reads naturally.
+    ///
+    /// `durationSeconds` is here because a set can prescribe time instead of reps — a plank, a
+    /// carry, a dead hang. Without it such a set has none of the first two things this method
+    /// looks for and returns the empty string, which renders as a blank line in both apps and
+    /// on the share card: the exercise appears to ask for nothing at all. The server-side
+    /// summary was fixed for this; this is the client-side copy of the same calculation.
+    ///
+    /// Defaulted so existing callers keep compiling — but any caller with a hold should pass it.
+    public func describeSet(reps: String?, weight: Double?, unit: String?,
+                            durationSeconds: Int? = nil) -> String {
         var parts: [String] = []
         if let reps, !reps.isEmpty { parts.append("\(reps) reps") }
+        if let durationSeconds, durationSeconds > 0 {
+            parts.append(Self.describeDuration(durationSeconds))
+        }
         if let load = describeLoad(weight: weight, unit: unit) { parts.append(load) }
         return parts.joined(separator: " · ")
+    }
+
+    /// "45s", "90s", "2m", "2m 30s" — whichever a coach would actually say.
+    ///
+    /// Holds stay in seconds up to two minutes because that is how they are prescribed and
+    /// counted in a gym: a plank is "sixty seconds", not "one minute". Matches the server's
+    /// rule so the same set does not read two ways depending on who rendered it.
+    static func describeDuration(_ seconds: Int) -> String {
+        if seconds < 120 { return "\(seconds)s" }
+        let minutes = seconds / 60, remainder = seconds % 60
+        return remainder == 0 ? "\(minutes)m" : "\(minutes)m \(remainder)s"
     }
 
     /// 100.0 prints as "100"; 102.5 keeps its half.
