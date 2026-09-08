@@ -84,7 +84,7 @@ public enum LoadType: String, Codable, Sendable, CaseIterable {
 
     /// 100.0 prints as "100"; 102.5 keeps its half.
     private static func trim(_ value: Double) -> String {
-        value == value.rounded() ? String(Int(value)) : String(value)
+        NumericInput.wholeOrDecimal(value)
     }
 }
 
@@ -138,7 +138,25 @@ public enum NumericInput {
 
     /// "7.5" keeps its half; "8.0" prints as "8". The scale is read by people, not machines.
     public static func formatRpe(_ value: Double) -> String {
-        value == value.rounded() ? String(Int(value)) : String(value)
+        wholeOrDecimal(value)
+    }
+
+    /// A weight for display: "100" for 100.0, "102.5" for the half.
+    public static func formatWeight(_ value: Double) -> String {
+        wholeOrDecimal(value)
+    }
+
+    /// Print a Double without the whole-number `.0`, and without trapping.
+    ///
+    /// `Int(Double)` is a trapping conversion: it crashes on infinity, NaN, and anything past
+    /// Int64. That is not hypothetical here — the prescribed weight field is trainer free text
+    /// parsed by `prescribedWeightValue`, and `Double("1e400")` is `+infinity`, for which
+    /// `value == value.rounded()` is true. One malformed weight took the app down on the
+    /// exercise it appeared on, and this formatter sits on the exercise-change path for every
+    /// weight, RPE and set chip in both apps.
+    public static func wholeOrDecimal(_ value: Double) -> String {
+        guard value.isFinite, value.magnitude < 1e15 else { return String(value) }
+        return value == value.rounded() ? String(Int(value)) : String(value)
     }
 
     /// True when the text is present but not a usable RPE — the state a field should mark.

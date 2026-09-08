@@ -113,11 +113,14 @@ public class NetworkService {
 
     // MARK: - Core Request Method
 
+    /// - Parameter retriedAfterRefresh: set on the one retry that follows a token refresh, so a
+    ///   request that still fails afterwards is reported instead of refreshing forever.
     private func makeRequest<T: Decodable, U: Encodable>(
         endpoint: String,
         method: HTTPMethod,
         body: U?,
-        requiresAuth: Bool
+        requiresAuth: Bool,
+        retriedAfterRefresh: Bool = false
     ) -> AnyPublisher<APIResponse<T>, Error> {
 
         // Build URL
@@ -212,9 +215,25 @@ public class NetworkService {
             }
             .decode(type: APIResponse<T>.self, decoder: JSONDecoder())
             .tryCatch { [weak self] error -> AnyPublisher<APIResponse<T>, Error> in
-                // If unauthorized and we have a refresh token, try to refresh
-                if case NetworkError.unauthorized = error,
+                // Refresh on an expired session and retry once.
+                //
+                // 403 sits alongside 401 on purpose: Spring's default entry point answered an
+                // expired token with 403, so refreshing only on 401 meant the session was never
+                // renewed and every request failed permanently an hour after launch. The lists
+                // this feeds — notifications, conversations — then rendered as empty rather than
+                // as failed, which is why it read as "they disappeared" and why only relaunching
+                // the app brought them back.
+                //
+                // A genuine role-based 403 costs one extra round trip and then passes through.
+                let isExpiredSession: Bool
+                switch error {
+                case NetworkError.unauthorized, NetworkError.forbidden: isExpiredSession = true
+                default: isExpiredSession = false
+                }
+
+                if isExpiredSession,
                    requiresAuth,
+                   !retriedAfterRefresh,
                    let refreshToken = self?.keychain.getRefreshToken() {
                     return self?.refreshAndRetry(
                         originalEndpoint: endpoint,
@@ -278,7 +297,8 @@ public class NetworkService {
                     endpoint: originalEndpoint,
                     method: method,
                     body: body,
-                    requiresAuth: true
+                    requiresAuth: true,
+                    retriedAfterRefresh: true
                 )
             }
             .eraseToAnyPublisher()

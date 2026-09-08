@@ -61,7 +61,16 @@ public class NotificationService {
                         if let data = response.data {
                             continuation.resume(returning: data)
                         } else {
-                            continuation.resume(returning: NotificationListResponse())
+                            // Throw rather than substituting an empty page.
+                            //
+                            // A default NotificationListResponse is `content: []`, `last: true`,
+                            // and the caller assigns both — so a response with no `data` wiped
+                            // the user's notifications AND set hasMorePages = false, which
+                            // permanently disabled load-more. The backend omits `data` whenever
+                            // it is null (its ApiResponse is @JsonInclude(NON_NULL)), so this
+                            // was not an exotic path. Throwing lets the caller's catch run and
+                            // leaves the list it already has intact.
+                            continuation.resume(throwing: NetworkError.noData)
                         }
                     }
                 )
