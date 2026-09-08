@@ -19,6 +19,9 @@ public struct FeedCardView: View {
     public let onTap: () -> Void
     public var onCongrats: (() -> Void)? = nil
 
+    /// The viewer's own fold state. Ignored entirely when the poster pinned the post open.
+    @State private var isCollapsed = false
+
     public init(
         post: FeedItem,
         onLike: @escaping () -> Void,
@@ -45,11 +48,26 @@ public struct FeedCardView: View {
         // own taps without competing.
         VStack(alignment: .leading, spacing: 0) {
             VStack(alignment: .leading, spacing: 0) {
-                FeedCardHeader(post: post, onMore: onMore)
-                cardContent
+                FeedCardHeader(
+                    post: post,
+                    onMore: onMore,
+                    // The chevron only offers to fold what is currently unfolded; the summary
+                    // row below is the way back open.
+                    onCollapse: isFolded || post.isPinnedOpen ? nil : {
+                        withAnimation(.easeInOut(duration: 0.18)) { isCollapsed = true }
+                    }
+                )
+                if !isFolded {
+                    cardContent
+                }
             }
             .contentShape(Rectangle())
             .onTapGesture(perform: onTap)
+
+            // Outside the tap region above, so expanding a folded card can't also fire onTap.
+            if isFolded {
+                collapsedSummary
+            }
 
             FeedCardFooter(
                 post: post,
@@ -60,6 +78,30 @@ public struct FeedCardView: View {
         }
         .background(DS.Color.card)
         .cornerRadius(DS.Space.cardRadius)
+    }
+
+    private var isFolded: Bool {
+        isCollapsed && !post.isPinnedOpen
+    }
+
+    /// One line standing in for the folded content, so a collapsed card still says something.
+    private var collapsedSummary: some View {
+        Button {
+            withAnimation(.easeInOut(duration: 0.18)) { isCollapsed = false }
+        } label: {
+            HStack(spacing: DS.Space.v4) {
+                Image(systemName: "chevron.down")
+                    .font(.system(size: 11, weight: .semibold))
+                Text(post.displayWorkoutType.map { "Show \($0)" } ?? "Show post")
+                    .font(DS.Typo.caption)
+                Spacer()
+            }
+            .foregroundColor(DS.Color.textSec)
+            .padding(.horizontal, DS.Space.cardPad)
+            .padding(.bottom, DS.Space.v12)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
     }
 
     @ViewBuilder
@@ -113,10 +155,14 @@ public struct FeedCardView: View {
 public struct FeedCardHeader: View {
     public let post: FeedItem
     public let onMore: () -> Void
+    /// Folds the post away. Nil hides the affordance — there is nothing to fold, or the
+    /// poster pinned it open.
+    public var onCollapse: (() -> Void)? = nil
 
-    public init(post: FeedItem, onMore: @escaping () -> Void) {
+    public init(post: FeedItem, onMore: @escaping () -> Void, onCollapse: (() -> Void)? = nil) {
         self.post = post
         self.onMore = onMore
+        self.onCollapse = onCollapse
     }
 
     public var body: some View {
@@ -158,6 +204,17 @@ public struct FeedCardHeader: View {
             }
 
             Spacer()
+
+            if let onCollapse {
+                Button(action: onCollapse) {
+                    Image(systemName: "chevron.up")
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundColor(DS.Color.textTer)
+                        .frame(width: 28, height: 32)
+                }
+                .buttonStyle(.borderless)
+                .accessibilityLabel("Collapse post")
+            }
 
             // More button
             Button(action: onMore) {
@@ -238,9 +295,22 @@ public struct FeedCardFooter: View {
                         .font(DS.Typo.caption)
                         .foregroundColor(DS.Color.textSec)
                 }
+
+                // Who can see this. The trainer app had the field and never drew it, so a coach
+                // posting to one client and a coach posting publicly looked identical.
+                if let visibility = post.visibility {
+                    HStack(spacing: 4) {
+                        Image(systemName: visibility.iconName)
+                            .font(.system(size: 11))
+                        Text(visibility.displayName)
+                            .font(DS.Typo.caption)
+                    }
+                    .foregroundColor(DS.Color.textTer)
+                }
             }
             .padding(.horizontal, DS.Space.cardPad)
 
+            if hasActions {
             Divider()
                 .background(DS.Color.hairline)
 
@@ -248,6 +318,10 @@ public struct FeedCardFooter: View {
             // .contentShape(Rectangle()) and uses .borderless to avoid the
             // outer-button-eats-taps issue we used to have in this footer.
             HStack(spacing: 0) {
+                // The server decides who may react — a post shared to a coach only, or an
+                // account that blocked you, comes back with these false. Drawing the buttons
+                // anyway just offers an action the API will refuse.
+                if post.canLike {
                 Button(action: onLike) {
                     HStack(spacing: 6) {
                         Image(systemName: post.hasLiked ? "heart.fill" : "heart")
@@ -263,7 +337,10 @@ public struct FeedCardFooter: View {
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(.borderless)
+                .accessibilityIdentifier("feedLikeButton")
+                }
 
+                if post.canComment {
                 Button(action: onComment) {
                     HStack(spacing: 6) {
                         Image(systemName: "bubble.left")
@@ -279,6 +356,8 @@ public struct FeedCardFooter: View {
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(.borderless)
+                .accessibilityIdentifier("feedCommentButton")
+                }
 
                 if let onCongrats = onCongrats, post.postType == .milestone {
                     Button(action: onCongrats) {
@@ -299,8 +378,15 @@ public struct FeedCardFooter: View {
                 }
             }
             .padding(.horizontal, DS.Space.v8)
+            }
         }
         .padding(.bottom, DS.Space.v8)
+    }
+
+    /// False when the viewer may do nothing here — without this the divider and the button row
+    /// still draw, leaving a hairline over an empty band.
+    private var hasActions: Bool {
+        post.canLike || post.canComment || (onCongrats != nil && post.postType == .milestone)
     }
 }
 

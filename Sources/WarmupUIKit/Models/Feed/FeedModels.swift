@@ -60,6 +60,10 @@ public struct FeedItem: Codable, Identifiable {
     public let perspective: PostPerspective?
     public let visibility: PostVisibility?
     public let createdAt: String?
+    /// "PINNED" or "COLLAPSIBLE" — whether the viewer may fold this post away. The poster's
+    /// call, not the reader's: someone showing off a PR pins it open. Absent on posts made
+    /// before the field existed, which read as collapsible.
+    public let displayMode: String?
 
     // Card variants - backend sends the appropriate one based on viewer access
     public let publicCard: PublicCardDto?
@@ -139,6 +143,11 @@ public struct FeedItem: Codable, Identifiable {
         viewerCanComment ?? true
     }
 
+    /// A pinned post outranks the viewer's tidiness — the poster asked for it to be seen.
+    public var isPinnedOpen: Bool {
+        displayMode?.uppercased() == "PINNED"
+    }
+
     /// Creates a copy of this FeedItem with updated like state (for optimistic updates)
     public func withLikeState(liked: Bool, likeCount: Int) -> FeedItem {
         FeedItem(
@@ -148,6 +157,7 @@ public struct FeedItem: Codable, Identifiable {
             perspective: perspective,
             visibility: visibility,
             createdAt: createdAt,
+            displayMode: displayMode,
             publicCard: publicCard,
             friendsCard: friendsCard,
             fullCard: fullCard,
@@ -158,6 +168,9 @@ public struct FeedItem: Codable, Identifiable {
             programName: programName,
             workoutLabel: workoutLabel,
             trainerName: trainerName,
+            // trainerId was missing here, so liking a post silently turned its coach credit
+            // back into plain text until the next feed load.
+            trainerId: trainerId,
             durationMinutes: durationMinutes,
             totalSets: totalSets,
             totalReps: totalReps,
@@ -300,6 +313,7 @@ public struct FeedItem: Codable, Identifiable {
         perspective: PostPerspective?,
         visibility: PostVisibility?,
         createdAt: String?,
+        displayMode: String? = nil,
         publicCard: PublicCardDto?,
         friendsCard: FriendsCardDto?,
         fullCard: FullCardDto?,
@@ -337,6 +351,7 @@ public struct FeedItem: Codable, Identifiable {
         self.perspective = perspective
         self.visibility = visibility
         self.createdAt = createdAt
+        self.displayMode = displayMode
         self.publicCard = publicCard
         self.friendsCard = friendsCard
         self.fullCard = fullCard

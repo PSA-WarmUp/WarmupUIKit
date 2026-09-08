@@ -8,6 +8,25 @@
 
 import SwiftUI
 
+// MARK: - Effort
+
+/// RPE as a word rather than a number.
+///
+/// An "8" means nothing to anyone who has not been coached; "Hard" does, and a feed post
+/// travels to people who never see a training plan. Coaches read the same card, so both apps
+/// say the word — the exact value stays where it is worked with, in the session itself.
+enum Effort {
+    static func label(for rpe: Double) -> String {
+        switch rpe {
+        case ..<4:   return "Easy"
+        case ..<6:   return "Steady"
+        case ..<8:   return "Hard"
+        case ..<9.5: return "Very hard"
+        default:     return "Max"
+        }
+    }
+}
+
 // MARK: - Public Card Content (Minimal - Card Style)
 public struct PublicCardContent: View {
     /// Opens a coach from the "with …" credit. Nil leaves it as plain text — see CoachCredit.
@@ -192,7 +211,7 @@ public struct FriendsCardContent: View {
                     metricItem(icon: "scalemass.fill", value: formatVolume(volume), label: card.volumeUnit ?? "lbs", color: DS.Color.success)
                 }
                 if let rpe = card.averageRpe, rpe > 0 {
-                    metricItem(icon: "heart.fill", value: String(format: "%.1f", rpe), label: "Avg RPE", color: DS.Color.error)
+                    metricItem(icon: "bolt.fill", value: Effort.label(for: rpe), label: "Effort", color: DS.Color.error)
                 }
             }
             .padding(.vertical, DS.Space.cardPad)
@@ -344,9 +363,9 @@ public struct FullCardContent: View {
                     metricItem(icon: "scalemass.fill", value: formatVolume(volume), label: card.volumeUnit ?? "lbs", color: DS.Color.success)
                 }
                 if let avgRpe = card.averageRpe, avgRpe > 0 {
-                    metricItem(icon: "heart.fill", value: String(format: "%.1f", avgRpe), label: "Avg RPE", color: DS.Color.error)
+                    metricItem(icon: "bolt.fill", value: Effort.label(for: avgRpe), label: "Effort", color: DS.Color.error)
                 } else if let rpe = card.rpe {
-                    metricItem(icon: "heart.fill", value: "\(rpe)", label: "RPE", color: DS.Color.error)
+                    metricItem(icon: "bolt.fill", value: Effort.label(for: Double(rpe)), label: "Effort", color: DS.Color.error)
                 }
             }
             .padding(.vertical, DS.Space.cardPad)
