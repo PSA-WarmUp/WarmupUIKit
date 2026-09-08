@@ -1,0 +1,23 @@
+name: Tests
+
+# Both apps consume this package from main. A break here breaks them both at their next
+# resolve, which is exactly the kind of failure worth catching before it is pulled in.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_16.4.app
+      # `swift test` cannot build this package — it imports UIKit, so it needs an iOS
+      # destination. That is a normal property of the package, not a misconfiguration.
+      - name: Run unit tests
+        run: |
+          set -o pipefail
+          xcodebuild test -scheme WarmupUIKit \
+            -destination 'platform=iOS Simulator,name=iPhone 16,OS=latest'
