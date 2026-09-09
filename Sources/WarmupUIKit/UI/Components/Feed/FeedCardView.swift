@@ -76,8 +76,11 @@ public struct FeedCardView: View {
                 onCongrats: onCongrats
             )
         }
-        .background(DS.Color.card)
-        .cornerRadius(DS.Space.cardRadius)
+        // dsCardSurface, not a bare fill: it carries the hairline and the light-mode shadow.
+        // A white card on the #F5F5F7 page is 1.09:1, so a fill on its own has no edge at all
+        // and the feed reads as one flat sheet — which is exactly why light mode looked worse
+        // than dark here, where #1A1A1E on #0B0B0D is a real step on the ramp and needs no help.
+        .dsCardSurface()
     }
 
     private var isFolded: Bool {
