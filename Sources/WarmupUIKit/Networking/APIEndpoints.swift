@@ -211,8 +211,8 @@ public struct APIEndpoints {
             "\(baseURL)/v1/workouts/\(id)/unsave"
         }
 
-        public static func remix(_ id: String) -> String {
-            "\(baseURL)/v1/workouts/\(id)/remix"
+        public static func copy(_ id: String) -> String {
+            "\(baseURL)/v1/workouts/\(id)/copy"
         }
 
         public static func proposeSchedule(id: String) -> String {
