@@ -100,6 +100,13 @@ public struct SetEditRowEnhanced: View {
     /// to 12 reps rendered a solid "12" that looked entered. The trainer saw "8 - 12" while
     /// the model held `maxReps: nil`, and the workout — correctly — showed "8". Now an unset
     /// max renders as an actual placeholder, so the boxes and the workout always agree.
+    ///
+    /// The min box still shows a fallback, because for a plain "12 reps" set the 12 genuinely
+    /// IS the low end and an empty box would read as missing. But a shown value that is never
+    /// written is the same trap wearing the other shoe: a trainer who took a 12-rep set and
+    /// typed only 14 into max got `minReps: nil, maxReps: 14`, which renders as a bare "14" —
+    /// the range they entered silently became a single number. So the max setter commits the
+    /// value the min box was already displaying.
     private var repRangeInputs: some View {
         HStack(spacing: 4) {
             // Min — falls back to the single rep count, which genuinely is the low value.
@@ -128,7 +135,15 @@ public struct SetEditRowEnhanced: View {
             // Max — only ever its own value. Empty means "no range", and that is the truth.
             TextField("max", text: Binding(
                 get: { set.maxReps.map(String.init) ?? "" },
-                set: { set.maxReps = Int($0) }
+                set: { newValue in
+                    set.maxReps = Int(newValue)
+                    // Adopt whatever the min box is showing. Without this, entering a max
+                    // against a plain-reps set saves a max with no min, and the range the
+                    // trainer typed renders as a lone number.
+                    if set.maxReps != nil, set.minReps == nil {
+                        set.minReps = set.reps
+                    }
+                }
             ))
             .textFieldStyle(.plain)
             .keyboardType(.numberPad)

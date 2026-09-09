@@ -51,9 +51,14 @@ public enum DS {
             dark: SwiftUI.Color(hex: "#212126")
         )
 
-        /// Subtle divider
+        /// Subtle divider — and, in light mode, the only thing separating a white card from
+        /// the page behind it.
+        ///
+        /// A white card on the #F5F5F7 page is 1.09:1, which is no separation at all, so the
+        /// hairline is doing the whole job. At 6% black it was barely present and cards read as
+        /// floating text. 10% is still subtle and actually draws an edge.
         public static let hairline = SwiftUI.Color.dynamicColor(
-            light: .black.opacity(0.06),
+            light: .black.opacity(0.10),
             dark: .white.opacity(0.06)
         )
 
@@ -75,10 +80,21 @@ public enum DS {
             dark: SwiftUI.Color(hex: "#8E8E93")
         )
 
-        /// Tertiary text
+        /// Tertiary text — eyebrow labels, counts, metadata.
+        ///
+        /// Both values were too faint to read against their own card. Measured on the surfaces
+        /// they actually sit on: light #AEAEB2 on a white card was 2.21:1 and dark #5A5A5F on
+        /// #1A1A1E was 2.53:1, where 4.5:1 is the AA threshold for body text and 3:1 the floor
+        /// for anything a person is expected to read at all.
+        ///
+        /// Light was the worse of the two, which is why the feed card looked flatter there than
+        /// in dark — most of what fills that card is secondary and tertiary type. These land at
+        /// ~3.6:1 and ~3.7:1: a real improvement, still clearly a step below `textSec` so the
+        /// hierarchy survives. Going all the way to 4.5 would make tertiary and secondary
+        /// almost the same colour and flatten the card a different way.
         public static let textTer = SwiftUI.Color.dynamicColor(
-            light: SwiftUI.Color(hex: "#AEAEB2"),
-            dark: SwiftUI.Color(hex: "#5A5A5F")
+            light: SwiftUI.Color(hex: "#87878C"),
+            dark: SwiftUI.Color(hex: "#74747A")
         )
 
         /// Brand primary — flamingo red
