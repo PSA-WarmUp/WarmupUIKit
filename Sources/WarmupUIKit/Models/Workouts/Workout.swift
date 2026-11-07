@@ -963,6 +963,29 @@ public struct ExerciseSet: Codable, Identifiable, Equatable, Sendable {
         return ""
     }
 
+    // MARK: Rep editing — the ONLY writers the rep boxes use
+
+    /// What the trainer typed into the min box.
+    ///
+    /// `reps` follows the min. The box used to write `minReps` alone, so a set that started at
+    /// the default 12 and was changed to 5-6 (or to a plain 5) kept `reps: 12` underneath. This
+    /// app reads min/max first and showed the edit; any reader that preferred `reps` — the
+    /// client app did — showed 12, so a trainer's change silently never reached the athlete.
+    /// Clearing the box leaves `reps` alone: it is then the count the min box falls back to.
+    public mutating func editMinReps(_ text: String) {
+        minReps = Int(text)
+        if let minReps { reps = minReps }
+    }
+
+    /// What the trainer typed into the max box. Entering a max against a plain-reps set adopts
+    /// the count the min box was already showing, so "12 - 14" saves as a range and not a lone 14.
+    public mutating func editMaxReps(_ text: String) {
+        maxReps = Int(text)
+        if maxReps != nil, minReps == nil {
+            minReps = reps
+        }
+    }
+
     /// Returns true if this set uses a rep range
     public var hasRepRange: Bool {
         minReps != nil && maxReps != nil && minReps != maxReps

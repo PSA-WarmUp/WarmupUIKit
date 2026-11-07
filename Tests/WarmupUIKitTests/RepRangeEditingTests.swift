@@ -14,12 +14,53 @@ import XCTest
 /// what `repRangeDisplay` renders never disagree.
 final class RepRangeEditingTests: XCTestCase {
 
-    /// Mirrors the max box's setter in SetEditRowEnhanced.repRangeInputs.
-    private func enterMax(_ value: String, on set: inout ExerciseSet) {
-        set.maxReps = Int(value)
-        if set.maxReps != nil, set.minReps == nil {
-            set.minReps = set.reps
-        }
+    /// The max box's real setter (SetEditRowEnhanced calls exactly this). These tests used to
+    /// re-implement it, which proves nothing about the code the box runs.
+    private func enterMax(_ value: String, on set: inout ExerciseSet) { set.editMaxReps(value) }
+    private func enterMin(_ value: String, on set: inout ExerciseSet) { set.editMinReps(value) }
+
+    // MARK: - No stale `reps` under an edit (trainer feedback 2026-11-06)
+    //
+    // Every set in a real trainer's workout read `reps: 12` beneath the range they typed,
+    // and the client app showed 12. Whatever order a reader resolves the three fields in,
+    // they must now agree.
+
+    /// The three resolution orders seen in the wild: this kit, the old client, the old seed.
+    private func readings(_ s: ExerciseSet) -> [String] {
+        let range = (s.minReps != nil && s.maxReps != nil && s.minReps != s.maxReps)
+            ? "\(s.minReps!)-\(s.maxReps!)" : nil
+        let clientOrder = range ?? (s.reps ?? s.minReps ?? s.maxReps).map(String.init) ?? ""
+        let seedOrder = range ?? (s.reps ?? s.minReps ?? s.maxReps).map(String.init) ?? ""
+        return [s.repRangeDisplay, clientOrder, seedOrder]
+    }
+
+    func testChangingADefaultSetToARangeLeavesNoStaleRepsUnderIt() {
+        var set = ExerciseSet(reps: 12)
+        enterMin("5", on: &set)
+        enterMax("6", on: &set)
+
+        XCTAssertEqual(set.repRangeDisplay, "5-6")
+        XCTAssertEqual(set.reps, 5, "the old 12 is still stored and a reader preferring reps shows it")
+        XCTAssertEqual(Set(readings(set)), ["5-6"])
+    }
+
+    func testChangingADefaultSetToASingleNumberViaTheMinBoxIsWhatEveryReaderSees() {
+        // Seated Box Jump: the trainer typed 5 into the min box and the client still read 12.
+        var set = ExerciseSet(reps: 12)
+        enterMin("5", on: &set)
+
+        XCTAssertEqual(set.reps, 5)
+        XCTAssertEqual(Set(readings(set)), ["5"])
+    }
+
+    func testClearingTheMinBoxKeepsTheCountItFallsBackTo() {
+        var set = ExerciseSet(reps: 12)
+        enterMin("8", on: &set)
+        enterMin("", on: &set)
+
+        XCTAssertNil(set.minReps)
+        XCTAssertEqual(set.reps, 8, "the box now shows reps; it must be the last count typed")
+        XCTAssertEqual(minBoxShows(set), "8")
     }
 
     /// Mirrors the min box's getter — what the trainer actually sees in the left box.

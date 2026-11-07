@@ -112,7 +112,8 @@ public struct SetEditRowEnhanced: View {
             // Min — falls back to the single rep count, which genuinely is the low value.
             TextField("reps", text: Binding(
                 get: { (set.minReps ?? set.reps).map(String.init) ?? "" },
-                set: { set.minReps = Int($0) }
+                // Keeps `reps` in step — see ExerciseSet.editMinReps.
+                set: { set.editMinReps($0) }
             ))
             .textFieldStyle(.plain)
             .keyboardType(.numberPad)
@@ -135,15 +136,8 @@ public struct SetEditRowEnhanced: View {
             // Max — only ever its own value. Empty means "no range", and that is the truth.
             TextField("max", text: Binding(
                 get: { set.maxReps.map(String.init) ?? "" },
-                set: { newValue in
-                    set.maxReps = Int(newValue)
-                    // Adopt whatever the min box is showing. Without this, entering a max
-                    // against a plain-reps set saves a max with no min, and the range the
-                    // trainer typed renders as a lone number.
-                    if set.maxReps != nil, set.minReps == nil {
-                        set.minReps = set.reps
-                    }
-                }
+                // Adopts whatever the min box is showing — see ExerciseSet.editMaxReps.
+                set: { set.editMaxReps($0) }
             ))
             .textFieldStyle(.plain)
             .keyboardType(.numberPad)
