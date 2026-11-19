@@ -63,9 +63,13 @@ public extension View {
     func dsEyebrow() -> some View {
         self
             .font(DS.TypoX.eyebrow)
-            .tracking(0.5)
+            .tracking(DS.Track.eyebrow)
             .textCase(.uppercase)
     }
+    func dsSheetTitle() -> some View { self.font(DS.TypoX.sheetTitle).tracking(DS.Track.title2) }
+    func dsRowTitle() -> some View   { self.font(DS.TypoX.rowTitle) }
+    func dsRowMeta() -> some View    { self.font(DS.TypoX.rowMeta) }
+    func dsPrescription() -> some View { self.font(DS.TypoX.prescription).dsFigures() }
     func dsStat() -> some View       { self.font(DS.TypoX.stat).dsFigures() }
     func dsStatMedium() -> some View { self.font(DS.TypoX.statMedium).dsFigures() }
 

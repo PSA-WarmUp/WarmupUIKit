@@ -59,7 +59,7 @@ public enum DS {
         /// floating text. 10% is still subtle and actually draws an edge.
         public static let hairline = SwiftUI.Color.dynamicColor(
             light: .black.opacity(0.10),
-            dark: .white.opacity(0.06)
+            dark: .white.opacity(0.08)
         )
 
         /// Stronger divider
@@ -129,26 +129,81 @@ public enum DS {
         /// Data a connected health source measured
         public static let dataBody = SwiftUI.Color(hex: "#5B8DD9")
 
-        /// Soft primary fill (badges, pills)
+        /// Soft primary fill (badges, pills, soft buttons)
         public static let primarySoft = SwiftUI.Color(hex: "#FF5857").opacity(0.12)
 
-        /// Success green
-        public static let success = SwiftUI.Color(hex: "#30D158")
+        /// Coral as TEXT ("See all", soft-button labels, the selected tab).
+        ///
+        /// The coral fill is the brand and never changes (#FF5857 in both modes). Small coral
+        /// type on a light page is only ~3:1, though, so text set in coral steps down to #B23433
+        /// in light mode. Dark keeps the brand value, which already reads at 6:1 on #0B0B0D.
+        public static let primaryText = SwiftUI.Color.dynamicColor(
+            light: SwiftUI.Color(hex: "#B23433"),
+            dark: SwiftUI.Color(hex: "#FF5857")
+        )
+
+        // MARK: Status — Done · Waiting · Scheduled
+        //
+        // Each status has a text-safe color per mode (light shades are darkened so a 13pt tag
+        // passes 4.5:1 on a white card) and a soft fill behind it. Waiting is amber, never coral:
+        // coral means "you can act here".
+
+        /// Done / completed / confirmed green
+        public static let success = SwiftUI.Color.dynamicColor(
+            light: SwiftUI.Color(hex: "#1A7F37"),
+            dark: SwiftUI.Color(hex: "#30D158")
+        )
 
         /// Soft success fill
-        public static let successSoft = SwiftUI.Color(hex: "#30D158").opacity(0.12)
+        public static let successSoft = SwiftUI.Color.dynamicColor(
+            light: SwiftUI.Color(hex: "#30D158").opacity(0.12),
+            dark: SwiftUI.Color(hex: "#30D158").opacity(0.14)
+        )
 
-        /// Warning / amber
-        public static let warning = SwiftUI.Color(hex: "#FF9F0A")
+        /// Waiting / proposed / pending amber
+        public static let warning = SwiftUI.Color.dynamicColor(
+            light: SwiftUI.Color(hex: "#A35400"),
+            dark: SwiftUI.Color(hex: "#FF9F0A")
+        )
 
         /// Soft warning fill
-        public static let warningSoft = SwiftUI.Color(hex: "#FF9F0A").opacity(0.12)
+        public static let warningSoft = SwiftUI.Color(hex: "#FF9F0A").opacity(0.14)
 
-        /// Info / blue
-        public static let info = SwiftUI.Color(hex: "#0A84FF")
+        /// Scheduled / info blue
+        public static let info = SwiftUI.Color.dynamicColor(
+            light: SwiftUI.Color(hex: "#0064D2"),
+            dark: SwiftUI.Color(hex: "#64B5FF")
+        )
 
         /// Soft info fill
-        public static let infoSoft = SwiftUI.Color(hex: "#0A84FF").opacity(0.12)
+        public static let infoSoft = SwiftUI.Color.dynamicColor(
+            light: SwiftUI.Color(hex: "#0A84FF").opacity(0.10),
+            dark: SwiftUI.Color(hex: "#0A84FF").opacity(0.16)
+        )
+
+        /// Body copy one step softer than `text` (instructions, notes, long descriptions)
+        public static let textBody = SwiftUI.Color.dynamicColor(
+            light: SwiftUI.Color(hex: "#3A3A3C"),
+            dark: SwiftUI.Color(hex: "#C7C7CC")
+        )
+
+        /// Selected filter chip: inverted, the loudest neutral on the page
+        public static let chipOnBg = SwiftUI.Color.dynamicColor(
+            light: SwiftUI.Color(hex: "#1C1C1E"),
+            dark: SwiftUI.Color(hex: "#F5F5F7")
+        )
+
+        /// Label on a selected filter chip
+        public static let chipOnFg = SwiftUI.Color.dynamicColor(
+            light: .white,
+            dark: SwiftUI.Color(hex: "#0B0B0D")
+        )
+
+        /// Selected pane of a segmented control: one step up the ramp from its track
+        public static let segOn = SwiftUI.Color.dynamicColor(
+            light: .white,
+            dark: SwiftUI.Color(hex: "#2E2E34")
+        )
 
         /// Error red (distinct from primary for semantics)
         public static let error = SwiftUI.Color(hex: "#FF3B30")
@@ -190,8 +245,8 @@ public enum DS {
     /// instrumentation with an agent attached, and rounded titles fight that everywhere they
     /// appear. Sizes and weights are unchanged, so nothing reflows.
     public enum Typo {
-        /// 32pt bold, -0.8 tracking
-        public static let largeTitle = Font.system(size: 32, weight: .bold)
+        /// 34pt bold, -0.8 tracking — tab title ("Today", "Clients")
+        public static let largeTitle = Font.system(size: 34, weight: .bold)
         /// 28pt bold, -0.6 tracking
         public static let title1 = Font.system(size: 28, weight: .bold)
         /// 20pt semibold, -0.4 tracking
@@ -210,8 +265,19 @@ public enum DS {
         public static let caption = Font.system(size: 13, weight: .regular)
         /// 13pt medium default
         public static let captionMedium = Font.system(size: 13, weight: .medium)
-        /// 11pt semibold mono, uppercase, +0.5 tracking (applied via `.dsEyebrow()`)
-        public static let eyebrow = Font.system(size: 11, weight: .semibold, design: .monospaced)
+        /// Section label: 13pt semibold, uppercase, +0.4 tracking (applied via `.dsEyebrow()`).
+        ///
+        /// Was 11pt mono. The final design sets a floor of 13 for everything a person reads
+        /// (the tab-bar label is the one exception), and section labels are words, not figures.
+        public static let eyebrow = Font.system(size: 13, weight: .semibold)
+        /// 22pt bold — sheet title ("Add a session")
+        public static let sheetTitle = Font.system(size: 22, weight: .bold)
+        /// 16pt semibold — the name on a list row
+        public static let rowTitle = Font.system(size: 16, weight: .semibold)
+        /// 14pt regular — the line under a row title
+        public static let rowMeta = Font.system(size: 14, weight: .regular)
+        /// 16pt medium mono — a prescription ("3 × 12 · 15 lb"), so sets and loads line up
+        public static let prescription = Font.system(size: 16, weight: .medium, design: .monospaced)
         /// 40pt semibold mono — hero stat numbers
         public static let stat = Font.system(size: 40, weight: .semibold, design: .monospaced)
         /// 24pt semibold mono — medium stat numbers
@@ -247,7 +313,7 @@ public enum DS {
         public static let title1: CGFloat = -0.6
         public static let title2: CGFloat = -0.4
         public static let title3: CGFloat = -0.2
-        public static let eyebrow: CGFloat = 0.5
+        public static let eyebrow: CGFloat = 0.4
         public static let pill: CGFloat = 0.3
     }
 

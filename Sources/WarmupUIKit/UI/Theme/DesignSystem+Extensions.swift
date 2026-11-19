@@ -34,7 +34,10 @@ public extension DS.Color {
     static let errorSoft = SwiftUI.Color(hex: "#FF3B30").opacity(0.12)
 
     /// On-primary text — explicit so dark/light don't accidentally invert.
-    static let onPrimary = SwiftUI.Color.white
+    ///
+    /// Near-black, not white: white on the #FF5857 brand coral is 3.1:1 and fails, near-black
+    /// is 6.3:1. Same in both modes because the coral fill is the same in both modes.
+    static let onPrimary = SwiftUI.Color(hex: "#0B0B0D")
 
     /// On-semantic (success/warning/error fills) text.
     static let onSemantic = SwiftUI.Color.white
@@ -169,7 +172,9 @@ public extension DS {
         public static var accent: SwiftUI.Color {
             switch current {
             case .trainer: return DS.Color.primary
-            case .athlete: return SwiftUI.Color(hex: "#FF7A45") // warmer coral for athletes
+            // One coral for both apps. The athlete app had its own warmer #FF7A45; the final
+            // design uses WarmUp coral everywhere so the two apps read as one product.
+            case .athlete: return DS.Color.primary
             }
         }
 
@@ -209,7 +214,11 @@ public extension DS {
         public static let subheadline = Font.system(.subheadline, design: .default).weight(.regular)
         public static let caption     = Font.system(.caption, design: .default).weight(.regular)
         public static let captionMedium = Font.system(.caption, design: .default).weight(.medium)
-        public static let eyebrow     = Font.system(.caption2, design: .monospaced).weight(.semibold)
+        public static let eyebrow     = Font.system(.footnote, design: .default).weight(.semibold)
+        public static let sheetTitle  = Font.system(.title2, design: .default).weight(.bold)
+        public static let rowTitle    = Font.system(.callout, design: .default).weight(.semibold)
+        public static let rowMeta     = Font.system(.subheadline, design: .default).weight(.regular)
+        public static let prescription = Font.system(.callout, design: .monospaced).weight(.medium)
         public static let stat        = Font.system(.largeTitle, design: .monospaced).weight(.semibold)
         public static let statMedium  = Font.system(.title2, design: .monospaced).weight(.semibold)
         /// Figures inline in text, at each text size.

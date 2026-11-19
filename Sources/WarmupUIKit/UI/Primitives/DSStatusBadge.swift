@@ -14,6 +14,14 @@ public enum DSStatus {
     case cancelled
     case info
     case neutral
+    /// A time the trainer suggested and the client hasn't confirmed (amber: waiting)
+    case proposed
+    /// Built but not scheduled or sent (neutral)
+    case draft
+    /// Finished (green)
+    case done
+    /// Both sides agreed (green)
+    case confirmed
     case custom(label: String, color: Color)
 
     var label: String {
@@ -26,6 +34,10 @@ public enum DSStatus {
         case .cancelled: return "Cancelled"
         case .info:      return "Info"
         case .neutral:   return "—"
+        case .proposed:  return "Proposed"
+        case .draft:     return "Draft"
+        case .done:      return "Done"
+        case .confirmed: return "Confirmed"
         case .custom(let l, _): return l
         }
     }
@@ -33,10 +45,10 @@ public enum DSStatus {
     var color: Color {
         switch self {
         case .scheduled, .info:  return DS.Color.info
-        case .pending:           return DS.Color.warning
-        case .accepted, .completed: return DS.Color.success
+        case .pending, .proposed: return DS.Color.warning
+        case .accepted, .completed, .done, .confirmed: return DS.Color.success
         case .declined, .cancelled: return DS.Color.error
-        case .neutral:           return DS.Color.textSec
+        case .neutral, .draft:   return DS.Color.textSec
         case .custom(_, let c):  return c
         }
     }
@@ -44,10 +56,10 @@ public enum DSStatus {
     var softFill: Color {
         switch self {
         case .scheduled, .info:  return DS.Color.infoSoft
-        case .pending:           return DS.Color.warningSoft
-        case .accepted, .completed: return DS.Color.successSoft
+        case .pending, .proposed: return DS.Color.warningSoft
+        case .accepted, .completed, .done, .confirmed: return DS.Color.successSoft
         case .declined, .cancelled: return DS.Color.errorSoft
-        case .neutral:           return DS.Color.card
+        case .neutral, .draft:   return DS.Color.cardHi
         case .custom(_, let c):  return c.opacity(0.12)
         }
     }
@@ -61,7 +73,7 @@ public enum DSStatus {
         case .declined:  return "xmark"
         case .cancelled: return "xmark.circle.fill"
         case .info:      return "info.circle"
-        case .neutral:   return nil
+        case .neutral, .proposed, .draft, .done, .confirmed: return nil
         case .custom:    return nil
         }
     }
@@ -74,7 +86,9 @@ public struct DSStatusBadge: View {
 
     public enum Size { case sm, md }
 
-    public init(_ status: DSStatus, size: Size = .sm, showIcon: Bool = true) {
+    /// Status tag: 13pt semibold on a soft fill, 6pt corners, no icon by default — the word
+    /// and its color carry the status. Same tag on every screen that shows a session.
+    public init(_ status: DSStatus, size: Size = .sm, showIcon: Bool = false) {
         self.status = status
         self.size = size
         self.showIcon = showIcon
@@ -93,14 +107,16 @@ public struct DSStatusBadge: View {
         .padding(.horizontal, hPad)
         .padding(.vertical, vPad)
         .background(
-            Capsule().fill(status.softFill)
+            RoundedRectangle(cornerRadius: 6, style: .continuous).fill(status.softFill)
         )
+        .lineLimit(1)
+        .fixedSize()
         .accessibilityElement(children: .combine)
         .accessibilityLabel("Status: \(status.label)")
     }
 
-    private var iconSize: CGFloat { size == .sm ? 9 : 11 }
-    private var textSize: CGFloat { size == .sm ? 11 : 12 }
+    private var iconSize: CGFloat { size == .sm ? 11 : 13 }
+    private var textSize: CGFloat { size == .sm ? 13 : 15 }
     private var hPad: CGFloat { size == .sm ? 8 : 10 }
     private var vPad: CGFloat { size == .sm ? 4 : 5 }
 }

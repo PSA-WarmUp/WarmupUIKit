@@ -2,7 +2,7 @@
 //  DSEyebrow.swift
 //  WarmupUIKit
 //
-//  11pt semibold uppercase text with +0.5 tracking.
+//  Section label: 13pt semibold uppercase, +0.4 tracking ("NEEDS YOU · 4").
 //
 
 import SwiftUI
@@ -19,7 +19,7 @@ public struct DSEyebrow: View {
     public var body: some View {
         Text(text.uppercased())
             .font(DS.Typo.eyebrow)
-            .tracking(0.5)
+            .tracking(DS.Track.eyebrow)
             .foregroundStyle(color)
             // Same reasoning as DSPill: an eyebrow is a single-line label, and letting it wrap
             // splits a word across two lines inside a header row.

@@ -9,11 +9,16 @@ import SwiftUI
 
 // MARK: - Variant + size
 
+/// Loudest to quietest. Only ONE `.primary` per screen.
 public enum DSButtonVariant {
+    /// Coral fill, near-black label ("Send to Phillip", "Start session")
     case primary
+    /// Soft coral ("Plan next", "Draft")
     case secondary
+    /// Neutral raised ("Assign", "Message")
     case tertiary
     case destructive
+    /// Coral text, no fill ("Open", "See all")
     case ghost
 }
 
@@ -42,15 +47,25 @@ public enum DSButtonSize {
         switch self {
         case .sm: return 36
         case .md: return 44
-        case .lg: return 52
+        case .lg: return 56
         }
     }
 
+    /// sm is the row action (a capsule beside a list row: "Draft", "Message", "Assign");
+    /// md is the 14pt-corner button; lg is the one big action on a card ("Start session").
     var cornerRadius: CGFloat {
         switch self {
-        case .sm: return 10
-        case .md: return 12
-        case .lg: return 14
+        case .sm: return 18
+        case .md: return 14
+        case .lg: return 16
+        }
+    }
+
+    var fontSize: CGFloat {
+        switch self {
+        case .sm: return 15
+        case .md: return 16
+        case .lg: return 17
         }
     }
 }
@@ -113,7 +128,7 @@ public struct DSButton: View {
                             .font(.system(size: iconSize, weight: .semibold))
                     }
                     Text(title)
-                        .font(.system(.headline, design: .default).weight(.semibold))
+                        .font(.system(size: size.fontSize, weight: variant.labelWeight))
                         .lineLimit(1)
                 }
             }
@@ -136,7 +151,19 @@ public struct DSButton: View {
     private func foregroundColor(for variant: DSButtonVariant) -> Color {
         switch variant {
         case .primary, .destructive: return DS.Color.onPrimary
-        case .secondary, .tertiary, .ghost: return DS.Tone.accent
+        case .secondary, .ghost: return DS.Color.primaryText
+        case .tertiary: return DS.Color.text
+        }
+    }
+}
+
+extension DSButtonVariant {
+    /// Loudest to quietest: filled 700, soft 600, neutral 500.
+    var labelWeight: Font.Weight {
+        switch self {
+        case .primary, .destructive: return .bold
+        case .secondary, .ghost: return .semibold
+        case .tertiary: return .medium
         }
     }
 }
@@ -167,14 +194,6 @@ public struct DSButtonStyle: ButtonStyle {
             .foregroundColor(foreground(pressed: configuration.isPressed))
             .background(background(pressed: configuration.isPressed))
             .clipShape(RoundedRectangle(cornerRadius: size.cornerRadius, style: .continuous))
-            .overlay(
-                Group {
-                    if (variant == .tertiary || variant == .ghost) && !isDisabled {
-                        RoundedRectangle(cornerRadius: size.cornerRadius, style: .continuous)
-                            .stroke(DS.Color.hairline, lineWidth: DS.Space.hairlineWidth)
-                    }
-                }
-            )
             .scaleEffect(configuration.isPressed && !isDisabled ? 0.97 : 1.0)
             .animation(DS.Motion.tap, value: configuration.isPressed)
             .contentShape(Rectangle())
@@ -186,7 +205,8 @@ public struct DSButtonStyle: ButtonStyle {
         }
         switch variant {
         case .primary, .destructive: return DS.Color.onPrimary
-        case .secondary, .tertiary, .ghost: return DS.Tone.accent
+        case .secondary, .ghost: return DS.Color.primaryText
+        case .tertiary: return DS.Color.text
         }
     }
 
@@ -206,8 +226,8 @@ public struct DSButtonStyle: ButtonStyle {
                 DS.Color.primarySoft
                     .overlay(pressed ? DS.Tone.accent.opacity(0.06) : Color.clear)
             case .tertiary:
-                Color.clear
-                    .overlay(pressed ? DS.Color.cardHi : Color.clear)
+                DS.Color.cardHi
+                    .overlay(pressed ? Color.black.opacity(0.06) : Color.clear)
             case .ghost:
                 Color.clear
                     .overlay(pressed ? DS.Color.cardHi.opacity(0.6) : Color.clear)
