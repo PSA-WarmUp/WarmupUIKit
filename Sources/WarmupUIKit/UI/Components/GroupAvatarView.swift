@@ -233,7 +233,7 @@ private extension Array {
         HStack(spacing: 20) {
             VStack {
                 GroupAvatarView(title: "Fitness Squad", size: .large)
-                Text("Initials").font(.caption)
+                Text("Initials").font(DS.Typo.caption)
             }
 
             VStack {
@@ -242,7 +242,7 @@ private extension Array {
                     participantAvatars: [nil, nil, nil, nil],
                     size: .large
                 )
-                Text("4 Avatars").font(.caption)
+                Text("4 Avatars").font(DS.Typo.caption)
             }
 
             VStack {
@@ -251,7 +251,7 @@ private extension Array {
                     participantAvatars: [nil, nil],
                     size: .large
                 )
-                Text("2 Avatars").font(.caption)
+                Text("2 Avatars").font(DS.Typo.caption)
             }
         }
 

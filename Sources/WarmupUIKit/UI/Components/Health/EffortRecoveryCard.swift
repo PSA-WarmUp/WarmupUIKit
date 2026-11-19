@@ -59,7 +59,7 @@ public struct EffortRecoveryCard: View {
     public var body: some View {
         VStack(alignment: .leading, spacing: DynamicTheme.Spacing.md) {
             Text("How well · effort vs recovery")
-                .font(.system(size: 11, weight: .semibold))
+                .font(.system(size: 13, weight: .semibold))
                 .foregroundColor(DynamicTheme.Colors.textSecondary)
 
             chart
@@ -139,7 +139,7 @@ public struct EffortRecoveryCard: View {
                 .foregroundColor(DynamicTheme.Colors.text)
                 .monospacedDigit()
             Text(label)
-                .font(.system(size: 9, weight: .semibold))
+                .font(.system(size: 13, weight: .semibold))
                 .foregroundColor(DynamicTheme.Colors.textTertiary)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -148,7 +148,7 @@ public struct EffortRecoveryCard: View {
     private func swatch(_ color: Color, _ label: String) -> some View {
         HStack(spacing: 5) {
             RoundedRectangle(cornerRadius: 2).fill(color).frame(width: 9, height: 9)
-            Text(label).font(.system(size: 10)).foregroundColor(DynamicTheme.Colors.textTertiary)
+            Text(label).font(.system(size: 13)).foregroundColor(DynamicTheme.Colors.textTertiary)
         }
     }
 }

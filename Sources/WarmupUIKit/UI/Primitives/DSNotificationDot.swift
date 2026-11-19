@@ -16,10 +16,10 @@ public extension View {
                 Group {
                     if let count = count, count > 0 {
                         Text(count > 99 ? "99+" : "\(count)")
-                            .font(.system(size: 10, weight: .bold))
+                            .font(.system(size: 13, weight: .bold))
                             .foregroundColor(.white)
-                            .padding(.horizontal, count > 9 ? 4 : 0)
-                            .frame(minWidth: 16, minHeight: 16)
+                            .padding(.horizontal, count > 9 ? 5 : 0)
+                            .frame(minWidth: 20, minHeight: 20)
                             .background(Capsule().fill(DS.Color.error))
                             .accessibilityLabel("\(count) unread")
                     } else {

@@ -50,7 +50,7 @@ public struct MetricTile: View {
                     .font(.system(size: 13))
                     .foregroundColor(HealthPalette.body)
                 Text(title)
-                    .font(.system(size: 11, weight: .medium))
+                    .font(.system(size: 13, weight: .medium))
                     .foregroundColor(DynamicTheme.Colors.textSecondary)
             }
 
@@ -61,14 +61,14 @@ public struct MetricTile: View {
                     .monospacedDigit()
                 if let unit {
                     Text(unit)
-                        .font(.system(size: 11))
+                        .font(.system(size: 13))
                         .foregroundColor(DynamicTheme.Colors.textSecondary)
                 }
             }
 
             if let baseline, let standing {
                 Text(direction.phrase(for: standing))
-                    .font(.system(size: 10.5, weight: .medium))
+                    .font(.system(size: 13, weight: .medium))
                     .foregroundColor(direction.tint(for: standing))
                     .lineLimit(1)
                     .minimumScaleFactor(0.8)
@@ -78,13 +78,13 @@ public struct MetricTile: View {
             } else {
                 // Honest about not knowing yet, rather than implying a verdict.
                 Text("building \(subject.possessive) normal")
-                    .font(.system(size: 10.5))
+                    .font(.system(size: 13))
                     .foregroundColor(DynamicTheme.Colors.textTertiary)
             }
 
             if let age = Self.staleLabel(for: measuredAt) {
                 Text(age)
-                    .font(.system(size: 10))
+                    .font(.system(size: 13))
                     .foregroundColor(DynamicTheme.Colors.textTertiary)
             }
         }

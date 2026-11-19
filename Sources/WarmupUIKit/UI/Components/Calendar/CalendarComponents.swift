@@ -260,7 +260,7 @@ public struct CalendarStatusBadge: View {
 
     public var body: some View {
         Text(displayText)
-            .font(.system(size: 11, weight: .medium, design: .monospaced))
+            .font(.system(size: 13, weight: .medium, design: .monospaced))
             .monospacedDigit()
             .foregroundColor(textColor)
             .padding(.horizontal, DynamicTheme.Spacing.sm)
@@ -387,7 +387,7 @@ public struct CalendarEventCardView<Event: CalendarEventDisplayable>: View {
             }
 
             Text(event.subtitle)
-                .font(.system(size: 10))
+                .font(.system(size: 13))
                 .foregroundColor(.white.opacity(0.8))
                 .lineLimit(1)
         }
@@ -456,7 +456,7 @@ public struct ConsultationEventCard: View {
             }
 
             Text(clientName)
-                .font(.system(size: 10))
+                .font(.system(size: 13))
                 .foregroundColor(.white.opacity(0.8))
                 .lineLimit(1)
         }

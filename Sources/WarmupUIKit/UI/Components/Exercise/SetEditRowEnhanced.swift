@@ -82,7 +82,7 @@ public struct SetEditRowEnhanced: View {
     private var setNumberButton: some View {
         Button(action: { onSetNumberTap?() }) {
             Text("Set \(setNumber)")
-                .font(.caption)
+                .font(DS.Typo.caption)
                 .fontWeight(.medium)
                 .foregroundColor(DynamicTheme.Colors.textSecondary)
                 .padding(.horizontal, 8)
@@ -130,7 +130,7 @@ public struct SetEditRowEnhanced: View {
             .dsInteractiveField(glyph: .none, fillWidth: false)
 
             Text("-")
-                .font(.caption)
+                .font(DS.Typo.caption)
                 .foregroundColor(DynamicTheme.Colors.textSecondary)
 
             // Max — only ever its own value. Empty means "no range", and that is the truth.
@@ -154,7 +154,7 @@ public struct SetEditRowEnhanced: View {
             .dsInteractiveField(glyph: .none, fillWidth: false)
 
             Text("reps")
-                .font(.caption)
+                .font(DS.Typo.caption)
                 .foregroundColor(DynamicTheme.Colors.textSecondary)
         }
     }
@@ -171,7 +171,7 @@ public struct SetEditRowEnhanced: View {
             // the user could not meaningfully fill, above a keyboard that could not spell it.
             HStack(spacing: 6) {
                 Text("Load")
-                    .font(.caption)
+                    .font(DS.Typo.caption)
                     .foregroundColor(DynamicTheme.Colors.textSecondary)
                 Text(load == .unloaded ? "—" : "bodyweight")
                     .font(.subheadline)
@@ -187,7 +187,7 @@ public struct SetEditRowEnhanced: View {
                 // A weighted pull-up still needs a field — but it is the ADDED load, and saying
                 // so is the difference between "8 × 25" and a client wondering whose 25 it is.
                 Text(load == .bodyweightPlus ? "+ Weight" : "Weight")
-                    .font(.caption)
+                    .font(DS.Typo.caption)
                     .foregroundColor(DynamicTheme.Colors.textSecondary)
                 TextField("—", text: Binding(
                     get: { set.weight ?? "" },
@@ -203,7 +203,7 @@ public struct SetEditRowEnhanced: View {
 
                 if let unit = set.weightUnit, !unit.isEmpty {
                     Text(unit)
-                        .font(.caption)
+                        .font(DS.Typo.caption)
                         .foregroundColor(DynamicTheme.Colors.textSecondary)
                 }
             }
@@ -218,7 +218,7 @@ public struct SetEditRowEnhanced: View {
     private var durationField: some View {
         HStack(spacing: 6) {
             Text("Hold")
-                .font(.caption)
+                .font(DS.Typo.caption)
                 .foregroundColor(DynamicTheme.Colors.textSecondary)
             TextField("—", text: Binding(
                 get: { set.duration.map(String.init) ?? "" },
@@ -232,7 +232,7 @@ public struct SetEditRowEnhanced: View {
             .multilineTextAlignment(.center)
             .dsInteractiveField(glyph: .none, fillWidth: false)
             Text("sec")
-                .font(.caption)
+                .font(DS.Typo.caption)
                 .foregroundColor(DynamicTheme.Colors.textSecondary)
         }
     }
@@ -242,7 +242,7 @@ public struct SetEditRowEnhanced: View {
     private var rpeField: some View {
         HStack(spacing: 6) {
             Text("RPE")
-                .font(.caption)
+                .font(DS.Typo.caption)
                 .foregroundColor(DynamicTheme.Colors.textSecondary)
             Menu {
                 Button("None") { set.targetRpe = nil }
@@ -283,7 +283,7 @@ public struct SetDisplayCompact: View {
     public var body: some View {
         HStack(spacing: 8) {
             Text("Set \(setNumber)")
-                .font(.caption)
+                .font(DS.Typo.caption)
                 .foregroundColor(DynamicTheme.Colors.textSecondary)
 
             Text(set.repRangeDisplay)
@@ -292,7 +292,7 @@ public struct SetDisplayCompact: View {
 
             if !set.effortDisplay.isEmpty {
                 Text("@")
-                    .font(.caption)
+                    .font(DS.Typo.caption)
                     .foregroundColor(DynamicTheme.Colors.textSecondary)
 
                 Text(set.effortDisplay)
@@ -341,7 +341,7 @@ public struct SetCountCycler: View {
                     .font(.headline)
                     .fontWeight(.bold)
                 Text("sets")
-                    .font(.caption)
+                    .font(DS.Typo.caption)
                     .foregroundColor(DynamicTheme.Colors.textSecondary)
             }
             .padding(.horizontal, 12)

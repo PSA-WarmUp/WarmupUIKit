@@ -158,7 +158,7 @@ public struct TrainingResponseCard: View {
                 .fill(color)
                 .frame(width: 9, height: 9)
             Text(label)
-                .font(.system(size: 10))
+                .font(.system(size: 13))
                 .foregroundColor(DynamicTheme.Colors.textTertiary)
         }
     }

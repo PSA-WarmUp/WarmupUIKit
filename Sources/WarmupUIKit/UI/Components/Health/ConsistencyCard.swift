@@ -49,14 +49,14 @@ public struct ConsistencyCard: View {
     public var body: some View {
         VStack(alignment: .leading, spacing: DynamicTheme.Spacing.md) {
             Text("How consistently · \(weekCount) weeks")
-                .font(.system(size: 11, weight: .semibold))
+                .font(.system(size: 13, weight: .semibold))
                 .foregroundColor(DynamicTheme.Colors.textSecondary)
 
             VStack(spacing: 4) {
                 ForEach(Array(rows.enumerated()), id: \.offset) { index, row in
                     HStack(spacing: 4) {
                         Text(index < Self.dayInitials.count ? Self.dayInitials[index] : "")
-                            .font(.system(size: 9))
+                            .font(.system(size: 13))
                             .foregroundColor(DynamicTheme.Colors.textTertiary)
                             .frame(width: 12, alignment: .leading)
 
@@ -109,7 +109,7 @@ public struct ConsistencyCard: View {
                 .fill(color)
                 .overlay(RoundedRectangle(cornerRadius: 2).stroke(stroke, lineWidth: 1))
                 .frame(width: 9, height: 9)
-            Text(label).font(.system(size: 10)).foregroundColor(DynamicTheme.Colors.textTertiary)
+            Text(label).font(.system(size: 13)).foregroundColor(DynamicTheme.Colors.textTertiary)
         }
     }
 }

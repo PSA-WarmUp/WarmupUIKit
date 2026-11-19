@@ -102,7 +102,7 @@ public struct ExerciseQuickAccessBar: View {
 
                 Button(action: onShowMore) {
                     Text("See All")
-                        .font(.caption)
+                        .font(DS.Typo.caption)
                         .foregroundColor(DynamicTheme.Colors.primary)
                 }
             }
@@ -110,7 +110,7 @@ public struct ExerciseQuickAccessBar: View {
 
             if exercises.isEmpty {
                 Text(emptyMessage)
-                    .font(.caption)
+                    .font(DS.Typo.caption)
                     .foregroundColor(DynamicTheme.Colors.textSecondary)
                     .frame(maxWidth: .infinity, alignment: .center)
                     .padding()
@@ -155,7 +155,7 @@ public struct ExerciseChip: View {
                     .foregroundColor(DynamicTheme.Colors.primary)
 
                 Text(exercise.name)
-                    .font(.caption)
+                    .font(DS.Typo.caption)
                     .fontWeight(.medium)
                     .foregroundColor(DynamicTheme.Colors.text)
                     .lineLimit(1)

@@ -195,7 +195,7 @@ public struct DynamicTheme {
         public static let captionLight = Font.system(size: 13, weight: .light)
 
         // Micro text for badges, tags
-        public static let micro = Font.system(size: 11, weight: .medium, design: .monospaced)
+        public static let micro = Font.system(size: 13, weight: .medium, design: .monospaced)
     }
 
     public struct Animations {

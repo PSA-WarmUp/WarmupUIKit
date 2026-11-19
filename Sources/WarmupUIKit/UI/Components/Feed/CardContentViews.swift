@@ -60,7 +60,7 @@ public struct PublicCardContent: View {
                     )
 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("Workout Complete")
+                    Text("Workout complete")
                         .font(DS.Typo.captionMedium)
                         .foregroundColor(DS.Color.textSec)
 
@@ -173,7 +173,7 @@ public struct FriendsCardContent: View {
                     )
 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("Workout Complete")
+                    Text("Workout complete")
                         .font(DS.Typo.captionMedium)
                         .foregroundColor(DS.Color.textSec)
                     Text(card.workoutType ?? "Workout")
@@ -414,7 +414,7 @@ public struct FullCardContent: View {
                 VStack(alignment: .leading, spacing: 4) {
                     HStack(spacing: 4) {
                         Image(systemName: "person.badge.shield.checkmark.fill").font(.system(size: 10))
-                        Text("Trainer Notes").font(DS.Typo.captionMedium)
+                        Text("Trainer notes").font(DS.Typo.captionMedium)
                     }
                     .foregroundColor(DS.Color.textTer)
                     Text(trainerNotes).font(DS.Typo.body).foregroundColor(DS.Color.text)
@@ -453,9 +453,9 @@ public struct FullCardContent: View {
 
     private var headerTitle: String {
         switch post.postType {
-        case .workout, .workoutSummary: return "Workout Complete"
+        case .workout, .workoutSummary: return "Workout complete"
         case .weeklySummary: return "Week in Review"
-        case .programCompletion: return "Program Complete"
+        case .programCompletion: return "Program complete"
         case .reflection: return "Reflection"
         default: return post.postType.displayName
         }

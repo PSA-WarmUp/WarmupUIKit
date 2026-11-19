@@ -44,7 +44,7 @@ public struct WorkoutIntensitySettingsView: View {
             // Effort type picker
             VStack(alignment: .leading, spacing: 4) {
                 Text("Effort Tracking")
-                    .font(.caption)
+                    .font(DS.Typo.caption)
                     .foregroundColor(DynamicTheme.Colors.textSecondary)
 
                 Picker("Effort Type", selection: $effortType) {
@@ -60,7 +60,7 @@ public struct WorkoutIntensitySettingsView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     HStack {
                         Text("Default \(effortType.displayName)")
-                            .font(.caption)
+                            .font(DS.Typo.caption)
                             .foregroundColor(DynamicTheme.Colors.textSecondary)
 
                         Spacer()
@@ -82,11 +82,11 @@ public struct WorkoutIntensitySettingsView: View {
                         // RPE scale labels
                         HStack {
                             Text("1 (Easy)")
-                                .font(.caption2)
+                                .font(DS.Typo.caption)
                                 .foregroundColor(DynamicTheme.Colors.textSecondary)
                             Spacer()
                             Text("10 (Max)")
-                                .font(.caption2)
+                                .font(DS.Typo.caption)
                                 .foregroundColor(DynamicTheme.Colors.textSecondary)
                         }
                     } else if effortType == .rir {
@@ -97,11 +97,11 @@ public struct WorkoutIntensitySettingsView: View {
                         // RIR scale labels
                         HStack {
                             Text("0 (Failure)")
-                                .font(.caption2)
+                                .font(DS.Typo.caption)
                                 .foregroundColor(DynamicTheme.Colors.textSecondary)
                             Spacer()
                             Text("5 (Easy)")
-                                .font(.caption2)
+                                .font(DS.Typo.caption)
                                 .foregroundColor(DynamicTheme.Colors.textSecondary)
                         }
                     }
@@ -111,7 +111,7 @@ public struct WorkoutIntensitySettingsView: View {
 
             // Info text
             Text(infoText)
-                .font(.caption)
+                .font(DS.Typo.caption)
                 .foregroundColor(DynamicTheme.Colors.textSecondary)
                 .padding(.top, 4)
         }
@@ -185,7 +185,7 @@ public struct EffortTypePicker: View {
         } label: {
             HStack(spacing: 4) {
                 Text(effortType.displayName)
-                    .font(.caption)
+                    .font(DS.Typo.caption)
                     .fontWeight(.medium)
                 Image(systemName: "chevron.down")
                     .font(.caption2)

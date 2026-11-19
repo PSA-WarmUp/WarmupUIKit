@@ -58,7 +58,7 @@ public struct TrainingMixCard: View {
     public var body: some View {
         VStack(alignment: .leading, spacing: DynamicTheme.Spacing.md) {
             Text("What \(subject.nominative) trained · 30 days")
-                .font(.system(size: 11, weight: .semibold))
+                .font(.system(size: 13, weight: .semibold))
                 .foregroundColor(DynamicTheme.Colors.textSecondary)
 
             if strengthShare + cardioShare > 0 {
@@ -99,7 +99,7 @@ public struct TrainingMixCard: View {
             }
 
             Text("dashed = programmed")
-                .font(.system(size: 9.5))
+                .font(.system(size: 13))
                 .foregroundColor(DynamicTheme.Colors.textTertiary)
         }
         .padding(DynamicTheme.Spacing.md)
@@ -110,7 +110,7 @@ public struct TrainingMixCard: View {
     private func regionRow(_ row: Row) -> some View {
         HStack(spacing: 8) {
             Text(row.pattern.label)
-                .font(.system(size: 10.5))
+                .font(.system(size: 13))
                 .foregroundColor(DynamicTheme.Colors.textSecondary)
                 .frame(width: 62, alignment: .leading)
 
@@ -135,7 +135,7 @@ public struct TrainingMixCard: View {
             .frame(height: 12)
 
             Text("\(row.done)")
-                .font(.system(size: 10))
+                .font(.system(size: 13))
                 .foregroundColor(DynamicTheme.Colors.textTertiary)
                 .monospacedDigit()
                 .frame(width: 22, alignment: .trailing)
@@ -145,7 +145,7 @@ public struct TrainingMixCard: View {
     private func swatch(_ color: Color, _ label: String) -> some View {
         HStack(spacing: 5) {
             RoundedRectangle(cornerRadius: 2).fill(color).frame(width: 9, height: 9)
-            Text(label).font(.system(size: 10)).foregroundColor(DynamicTheme.Colors.textTertiary)
+            Text(label).font(.system(size: 13)).foregroundColor(DynamicTheme.Colors.textTertiary)
         }
     }
 

@@ -69,11 +69,11 @@ public struct SourceStrip: View {
                     .fill(isHealthy ? DynamicTheme.Colors.success : DynamicTheme.Colors.warning)
                     .frame(width: 6, height: 6)
                 Text(title)
-                    .font(.system(size: 10, weight: .semibold))
+                    .font(.system(size: 13, weight: .semibold))
                     .foregroundColor(DynamicTheme.Colors.textSecondary)
             }
             Text(detail)
-                .font(.system(size: 11))
+                .font(.system(size: 13))
                 .foregroundColor(muted ? DynamicTheme.Colors.warning : DynamicTheme.Colors.textTertiary)
                 .lineLimit(1)
                 .minimumScaleFactor(0.85)

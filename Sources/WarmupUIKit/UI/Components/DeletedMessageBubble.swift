@@ -101,21 +101,21 @@ public struct CompactDeletedMessageText: View {
 #Preview("Deleted Message Bubbles") {
     VStack(spacing: 16) {
         Text("Sent by current user (right)")
-            .font(.caption)
+            .font(DS.Typo.caption)
             .foregroundColor(.secondary)
         DeletedMessageBubble(isFromCurrentUser: true)
 
         Divider()
 
         Text("Sent by other user (left)")
-            .font(.caption)
+            .font(DS.Typo.caption)
             .foregroundColor(.secondary)
         DeletedMessageBubble(isFromCurrentUser: false)
 
         Divider()
 
         Text("Compact version (for previews)")
-            .font(.caption)
+            .font(DS.Typo.caption)
             .foregroundColor(.secondary)
         CompactDeletedMessageText()
     }

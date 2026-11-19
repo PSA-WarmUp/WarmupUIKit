@@ -96,7 +96,7 @@ public struct ParticipantChip: View {
             .fill(DynamicTheme.Colors.primary.opacity(0.2))
             .overlay(
                 Text(String(name.prefix(1)).uppercased())
-                    .font(.system(size: 10, weight: .semibold))
+                    .font(.system(size: 13, weight: .semibold))
                     .foregroundColor(DynamicTheme.Colors.primary)
             )
     }
