@@ -140,13 +140,6 @@ public extension DSListRow where Leading == EmptyView {
     }
 }
 
-public extension DSListRow where Trailing == EmptyView {
-    init(_ title: String, subtitle: String? = nil, subtitleColor: Color = DS.Color.textSec,
-         @ViewBuilder leading: () -> Leading) {
-        self.init(title, subtitle: subtitle, subtitleColor: subtitleColor, leading: leading, trailing: { EmptyView() })
-    }
-}
-
 public extension DSListRow where Leading == EmptyView, Trailing == EmptyView {
     init(_ title: String, subtitle: String? = nil, subtitleColor: Color = DS.Color.textSec) {
         self.init(title, subtitle: subtitle, subtitleColor: subtitleColor, leading: { EmptyView() }, trailing: { EmptyView() })
