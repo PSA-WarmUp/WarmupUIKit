@@ -216,7 +216,7 @@ public extension DS {
         public static let captionMedium = Font.system(.caption, design: .default).weight(.medium)
         public static let eyebrow     = Font.system(.footnote, design: .default).weight(.semibold)
         public static let sheetTitle  = Font.system(.title2, design: .default).weight(.bold)
-        public static let rowTitle    = Font.system(.callout, design: .default).weight(.semibold)
+        public static let rowTitle    = Font.system(.callout, design: .default).weight(.medium)
         public static let rowMeta     = Font.system(.subheadline, design: .default).weight(.regular)
         public static let prescription = Font.system(.callout, design: .monospaced).weight(.medium)
         public static let stat        = Font.system(.largeTitle, design: .monospaced).weight(.semibold)

@@ -272,8 +272,9 @@ public enum DS {
         public static let eyebrow = Font.system(size: 13, weight: .semibold)
         /// 22pt bold — sheet title ("Add a session")
         public static let sheetTitle = Font.system(size: 22, weight: .bold)
-        /// 16pt semibold — the name on a list row
-        public static let rowTitle = Font.system(size: 16, weight: .semibold)
+        /// 16pt medium — the name on a list row. Medium, between the client app's semibold and
+        /// the trainer's regular, so the two apps read the same.
+        public static let rowTitle = Font.system(size: 16, weight: .medium)
         /// 14pt regular — the line under a row title
         public static let rowMeta = Font.system(size: 14, weight: .regular)
         /// 16pt medium mono — a prescription ("3 × 12 · 15 lb"), so sets and loads line up
